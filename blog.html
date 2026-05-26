@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> Blog by Arko </title>
+  <meta name="description" content="Practical insights on Machine Learning, MLOps, EHR Analytics, Federated Learning, and Data Engineering by Arko Saha — Data Scientist & AI Engineer based in London, UK." />
+  <meta name="keywords" content="data scientist London, AI engineer UK, machine learning blog, MLOps, EHR analytics, federated learning, Python data science, Power BI, ETL pipelines, clinical AI, sports analytics, credit risk modelling, Arko Saha" />
+  <meta name="author" content="Arko Saha" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://arkosaha.dev/blog.html" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Arko Saha's Blog — Data Science & AI Insights" />
+  <meta property="og:description" content="Practical articles on ML, MLOps, EHR Analytics, and Data Engineering by Arko Saha, Data Scientist in London." />
+  <meta property="og:url" content="https://arkosaha.dev/blog.html" />
+  <meta property="og:site_name" content="Arko Saha Portfolio" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Arko Saha — Data Science Blog" />
+  <meta name="twitter:description" content="Practical ML, MLOps, and AI engineering articles from a London-based data scientist." />
+
+  <!-- Schema.org Person + Blog -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://arkosaha.dev/#person",
+        "name": "Arko Saha",
+        "jobTitle": "Data Scientist & AI Engineer",
+        "description": "MSc Data Science graduate from the University of Roehampton specialising in Machine Learning, Deep Learning, EHR Analytics, MLOps, and Data Engineering.",
+        "url": "https://arkosaha.dev",
+        "email": "arkosaha.ruet@gmail.com",
+        "alumniOf": [
+          { "@type": "CollegeOrUniversity", "name": "University of Roehampton", "address": "London, UK" },
+          { "@type": "CollegeOrUniversity", "name": "Rajshahi University of Engineering & Technology" }
+        ],
+        "knowsAbout": ["Machine Learning","Deep Learning","MLOps","EHR Analytics","Federated Learning","Data Engineering","Python","TensorFlow","PyTorch","Apache Airflow","Power BI","SQL"],
+        "address": { "@type": "PostalAddress", "addressLocality": "London", "addressCountry": "GB" },
+        "sameAs": [
+          "https://linkedin.com/in/arko-saha-ds",
+          "https://github.com/arko-saha"
+        ]
+      },
+      {
+        "@type": "Blog",
+        "@id": "https://arkosaha.dev/blog.html",
+        "name": "Arko Saha's Data Science Blog",
+        "description": "Practical insights on Machine Learning, MLOps, clinical AI, and data engineering.",
+        "url": "https://arkosaha.dev/blog.html",
+        "author": { "@id": "https://arkosaha.dev/#person" },
+        "inLanguage": "en-GB",
+        "blogPost": [
+          {
+            "@type": "BlogPosting",
+            "headline": "Building a Federated Learning System for ICU Sepsis Prediction: Lessons from MIMIC-III",
+            "description": "How I designed a safe offline reinforcement learning architecture for personalised sepsis care using federated learning on MIMIC-III clinical data.",
+            "author": { "@id": "https://arkosaha.dev/#person" },
+            "datePublished": "2026-04-15",
+            "keywords": ["federated learning","reinforcement learning","sepsis","MIMIC-III","clinical AI","healthcare AI","EHR"]
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "Why Your FICO Bucketing Strategy Is Probably Suboptimal — and How to Fix It",
+            "description": "A deep dive into credit risk bucketing strategies: Equal Width vs Equal Frequency vs IV-based approaches, with Python code and a Gini comparison.",
+            "author": { "@id": "https://arkosaha.dev/#person" },
+            "datePublished": "2026-03-20",
+            "keywords": ["credit risk","FICO score","data science","Python","quantitative finance","scikit-learn","gini coefficient"]
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "From 400,000 Cricket Deliveries to a Data Warehouse: My ETL Architecture",
+            "description": "How I designed an ETL pipeline processing 400k+ ball-by-ball cricket records into a star schema data warehouse for predictive analytics.",
+            "author": { "@id": "https://arkosaha.dev/#person" },
+            "datePublished": "2026-02-10",
+            "keywords": ["data engineering","ETL","data warehouse","star schema","Apache Airflow","sports analytics","cricket"]
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="cursor-glow" id="cursorGlow"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Home">
+        <span class="nav-logo-monogram">AS</span>
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="index.html#about" class="nav-link" data-index="01">About</a></li>
+        <li><a href="index.html#skills" class="nav-link" data-index="02">Skills</a></li>
+        <li><a href="index.html#experience" class="nav-link" data-index="03">Experience</a></li>
+        <li><a href="index.html#leadership" class="nav-link" data-index="04">Leadership</a></li>
+        <li><a href="index.html#projects" class="nav-link" data-index="05">Projects</a></li>
+        <li><a href="index.html#publications" class="nav-link" data-index="06">Publications</a></li>
+        <li><a href="index.html#contact" class="nav-link" data-index="07">Contact</a></li>
+        <li><a href="blog.html" class="nav-link" data-index="08" style="color:var(--forest)">Blog</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <ul role="list">
+      <li><a href="index.html#about" class="drawer-link">01 — About</a></li>
+      <li><a href="index.html#skills" class="drawer-link">02 — Skills</a></li>
+      <li><a href="index.html#experience" class="drawer-link">03 — Experience</a></li>
+      <li><a href="index.html#leadership" class="drawer-link">04 — Leadership</a></li>
+      <li><a href="index.html#projects" class="drawer-link">05 — Projects</a></li>
+      <li><a href="index.html#publications" class="drawer-link">06 — Publications</a></li>
+      <li><a href="index.html#contact" class="drawer-link">07 — Contact</a></li>
+      <li><a href="blog.html" class="drawer-link">08 — Blog</a></li>
+    </ul>
+  </div>
+
+  <main id="main-content">
+
+    <!-- BLOG HERO -->
+    <header class="blog-hero">
+      <div class="container">
+        <div class="blog-hero-label reveal-up">
+          <span class="mono label-tag">[ Arko Saha · Data Science Blog ]</span>
+        </div>
+        <h1 class="blog-hero-title reveal-up" style="animation-delay:.15s">
+          Writing on Data,<br /><em>AI & Engineering</em>
+        </h1>
+        <p class="blog-hero-sub reveal-up" style="animation-delay:.3s">
+          Practical deep-dives into Machine Learning, MLOps, Clinical AI, and Data Engineering 
+          — from the notebooks of a London-based Data Scientist.
+        </p>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="blog-grid">
+
+        <!-- POSTS -->
+        <section aria-label="Blog posts">
+
+          <!-- Topic filter -->
+          <div style="margin-bottom: 2rem; display:flex; flex-wrap:wrap; gap:.5rem;" role="list" aria-label="Filter by topic">
+            <button class="topic-btn active" data-topic="all">All</button>
+            <button class="topic-btn" data-topic="ml">Machine Learning</button>
+            <button class="topic-btn" data-topic="mlops">MLOps</button>
+            <button class="topic-btn" data-topic="clinical">Clinical AI</button>
+            <button class="topic-btn" data-topic="engineering">Data Engineering</button>
+            <button class="topic-btn" data-topic="finance">Quant Finance</button>
+          </div>
+
+          <div class="blog-posts">
+
+            <!-- Post 1 -->
+            <article class="blog-card reveal-up" data-topics="clinical ml mlops" style="animation-delay:.05s">
+              <div class="blog-card-body">
+                <div class="blog-card-meta">
+                  <span class="blog-tag">Clinical AI</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Federated Learning</span>
+                  <span class="blog-date mono">15 Apr 2026</span>
+                  <span class="blog-read-time mono">· 12 min read</span>
+                </div>
+                <h2 class="blog-card-title">
+                  <a href="post-federated-learning.html">
+                    Building a Federated Learning System for ICU Sepsis Prediction: Lessons from MIMIC-III
+                  </a>
+                </h2>
+                <p class="blog-card-excerpt">
+                  Sepsis kills up to 20% of ICU patients globally, yet treatment protocols remain frustratingly one-size-fits-all. In this post, I walk through how I designed a <strong>safe offline reinforcement learning</strong> system with hierarchical and multimodal architectures — trained on MIMIC-III data without ever centralising sensitive patient records. We'll cover the federated setup, reward shaping for clinical safety, and how we handle data heterogeneity across hospital sites.
+                </p>
+                <div class="blog-card-footer">
+                  <div class="blog-card-author">
+                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
+                    <span class="blog-author-name">Arko Saha</span>
+                  </div>
+                  <a href="post-federated-learning.html" class="blog-read-link" aria-label="Read full article on Federated Learning for Sepsis">
+                    Read article →
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 2 -->
+            <article class="blog-card reveal-up" data-topics="finance ml" style="animation-delay:.1s">
+              <div class="blog-card-body">
+                <div class="blog-card-meta">
+                  <span class="blog-tag">Quant Finance</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Credit Risk</span>
+                  <span class="blog-date mono">20 Mar 2026</span>
+                  <span class="blog-read-time mono">· 9 min read</span>
+                </div>
+                <h2 class="blog-card-title">
+                  <a href="post-fico-bucketing.html">
+                    Why Your FICO Bucketing Strategy Is Probably Suboptimal — and How to Fix It
+                  </a>
+                </h2>
+                <p class="blog-card-excerpt">
+                  Most credit risk teams default to equal-width bins when segmenting FICO scores. It's convenient. It's also leaving discriminatory power on the table. I built FICO-Quant to benchmark Equal Width, Equal Frequency, and IV-based bucketing strategies head-to-head. The results were striking: IV-based bucketing hit <strong>0.85 Gini</strong> while maintaining 100% monotonicity — something simpler methods couldn't guarantee. Here's the methodology, the Python code, and what I learned.
+                </p>
+                <div class="blog-card-footer">
+                  <div class="blog-card-author">
+                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
+                    <span class="blog-author-name">Arko Saha</span>
+                  </div>
+                  <a href="post-fico-bucketing.html" class="blog-read-link" aria-label="Read full article on FICO bucketing">
+                    Read article →
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 3 -->
+            <article class="blog-card reveal-up" data-topics="engineering mlops" style="animation-delay:.15s">
+              <div class="blog-card-body">
+                <div class="blog-card-meta">
+                  <span class="blog-tag">Data Engineering</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">ETL</span>
+                  <span class="blog-date mono">10 Feb 2026</span>
+                  <span class="blog-read-time mono">· 10 min read</span>
+                </div>
+                <h2 class="blog-card-title">
+                  <a href="post-cricket-etl.html">
+                    From 400,000 Cricket Deliveries to a Data Warehouse: My ETL Architecture
+                  </a>
+                </h2>
+                <p class="blog-card-excerpt">
+                  When I started my MSc dissertation, I wanted to build something real — not a toy dataset. I ended up ingesting over <strong>400,000 ball-by-ball cricket records</strong> from ESPN Cricinfo and Cricsheet into a Snowflake-schema data warehouse. This post covers the ETL design: how I structured fact tables by player, position, and match dimensions, and the lessons I learned about data quality when your source is a website built by cricket fans, not data engineers.
+                </p>
+                <div class="blog-card-footer">
+                  <div class="blog-card-author">
+                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
+                    <span class="blog-author-name">Arko Saha</span>
+                  </div>
+                  <a href="post-cricket-etl.html" class="blog-read-link" aria-label="Read full article on Cricket ETL">
+                    Read article →
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 4 -->
+            <article class="blog-card reveal-up" data-topics="mlops engineering" style="animation-delay:.2s">
+              <div class="blog-card-body">
+                <div class="blog-card-meta">
+                  <span class="blog-tag">MLOps</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Apache Airflow</span>
+                  <span class="blog-date mono">05 Jan 2026</span>
+                  <span class="blog-read-time mono">· 7 min read</span>
+                </div>
+                <h2 class="blog-card-title">
+                  <a href="post-airflow-docker.html">
+                    Containerising Apache Airflow with Astro: A Production-Ready Weather ETL
+                  </a>
+                </h2>
+                <p class="blog-card-excerpt">
+                  Most Airflow tutorials show you a single DAG running on your laptop. I wanted to build something actually deployable. This post documents how I used Astronomer's Astro CLI to containerise a real-time weather ingestion pipeline — from Open-Meteo → PostgreSQL — with proper <strong>PostgresHook</strong> connections, DAG testing, and a local dev environment that mirrors production. Ideal if you're moving beyond the "hello world" DAG.
+                </p>
+                <div class="blog-card-footer">
+                  <div class="blog-card-author">
+                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
+                    <span class="blog-author-name">Arko Saha</span>
+                  </div>
+                  <a href="post-airflow-docker.html" class="blog-read-link" aria-label="Read full article on Airflow containerisation">
+                    Read article →
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 5 -->
+            <article class="blog-card reveal-up" data-topics="ml clinical" style="animation-delay:.25s">
+              <div class="blog-card-body">
+                <div class="blog-card-meta">
+                  <span class="blog-tag">Clinical AI</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Gradient Boosting</span>
+                  <span class="blog-date mono">18 Dec 2025</span>
+                  <span class="blog-read-time mono">· 8 min read</span>
+                </div>
+                <h2 class="blog-card-title">
+                  <a href="post-glycemic-prediction.html">
+                    Predicting Postprandial Glycemic Response in Gestational Diabetes with CGM Data
+                  </a>
+                </h2>
+                <p class="blog-card-excerpt">
+                  This article accompanies my co-authored publication in <em>Data Modeling</em> (2026). We trained <strong>gradient boosting models</strong> on continuous glucose monitoring (CGM) data to predict postprandial glycemic response in gestational diabetes patients — 90 minutes before a meal spike occurs. Early prediction enables clinical intervention windows that weren't previously possible with manual monitoring. Here's the feature engineering pipeline and model design.
+                </p>
+                <div class="blog-card-footer">
+                  <div class="blog-card-author">
+                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
+                    <span class="blog-author-name">Arko Saha</span>
+                  </div>
+                  <a href="post-glycemic-prediction.html" class="blog-read-link" aria-label="Read full article on glycemic prediction">
+                    Read article →
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 6 -->
+            <article class="blog-card reveal-up" data-topics="ml engineering" style="animation-delay:.3s">
+              <div class="blog-card-body">
+                <div class="blog-card-meta">
+                  <span class="blog-tag">Power BI</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">BI & Analytics</span>
+                  <span class="blog-date mono">02 Nov 2025</span>
+                  <span class="blog-read-time mono">· 6 min read</span>
+                </div>
+                <h2 class="blog-card-title">
+                  <a href="post-power-bi-dax.html">
+                    Advanced DAX Patterns That Actually Matter for Executive Dashboards
+                  </a>
+                </h2>
+                <p class="blog-card-excerpt">
+                  After delivering Power BI dashboards for startups and enterprise clients alike — including a deployment that drove a <strong>15% operational efficiency gain</strong> — I've developed a strong view on which DAX patterns actually matter and which ones are cargo cult complexity. This post covers time-intelligence measures, calculation groups, and the single pattern that makes executive dashboards feel instant.
+                </p>
+                <div class="blog-card-footer">
+                  <div class="blog-card-author">
+                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
+                    <span class="blog-author-name">Arko Saha</span>
+                  </div>
+                  <a href="post-power-bi-dax.html" class="blog-read-link" aria-label="Read full article on DAX patterns">
+                    Read article →
+                  </a>
+                </div>
+              </div>
+            </article>
+
+          </div><!-- /blog-posts -->
+        </section><!-- /posts -->
+
+        <!-- SIDEBAR -->
+        <aside class="blog-sidebar" aria-label="Sidebar">
+
+          <!-- ★ Recruiter CTA — the most important element -->
+          <div class="recruiter-cta" role="complementary" aria-label="Hire Arko Saha">
+            <p class="recruiter-cta-title">Open to New Roles</p>
+            <p class="recruiter-cta-sub">
+              I'm actively looking for Data Scientist and AI Engineer positions in London (hybrid / remote welcome). Let's talk.
+            </p>
+            <a href="mailto:arkosaha.ruet@gmail.com?subject=Job%20Opportunity%20for%20Arko%20Saha&body=Hi%20Arko%2C%0A%0AI%20came%20across%20your%20portfolio%20and%20would%20like%20to%20discuss%20an%20opportunity.%0A%0ARole%3A%20%0ACompany%3A%20%0ALocation%3A%20%0A%0ABest%20regards%2C"
+               class="btn"
+               id="recruiter-email-cta"
+               aria-label="Email Arko Saha about a job opportunity">
+              📧 Email Me About a Role
+            </a>
+            <a href="CV_Arko_Saha.pdf" class="btn btn-outline" target="_blank" rel="noopener" aria-label="Download Arko's CV">
+              ↓ Download CV (PDF)
+            </a>
+          </div>
+
+          <!-- About card -->
+          <div class="sidebar-card">
+            <p class="sidebar-card-title">About the Author</p>
+            <div style="display:flex; align-items:center; gap:.75rem; margin-bottom:1rem;">
+              <div class="blog-author-avatar" style="width:48px;height:48px;font-size:.85rem;" aria-hidden="true">AS</div>
+              <div>
+                <p style="font-weight:600;font-size:.9rem;color:var(--text-0)">Arko Saha</p>
+                <p style="font-size:.78rem;color:var(--text-2);font-family:var(--font-mono)">MSc Data Science · London</p>
+              </div>
+            </div>
+            <p style="font-size:.82rem;color:var(--text-2);line-height:1.65;margin-bottom:1rem;">
+              Data Scientist &amp; AI Engineer specialising in ML, Deep Learning, MLOps, and Clinical Data Analytics. Graduate of the University of Roehampton with an International Excellence Scholarship.
+            </p>
+            <div style="display:flex;gap:.75rem;flex-wrap:wrap;">
+              <a href="https://linkedin.com/in/arko-saha-ds" target="_blank" rel="noopener" class="card-link mono" aria-label="LinkedIn">linkedin ↗</a>
+              <a href="https://github.com/arko-saha" target="_blank" rel="noopener" class="card-link mono" aria-label="GitHub">github ↗</a>
+              <a href="index.html" class="card-link mono" aria-label="Portfolio">portfolio ↗</a>
+            </div>
+          </div>
+
+          <!-- Skills cloud -->
+          <div class="sidebar-card">
+            <p class="sidebar-card-title">Topics Covered</p>
+            <div class="skills-cloud">
+              <span class="skill-tag">Machine Learning</span>
+              <span class="skill-tag">Deep Learning</span>
+              <span class="skill-tag">MLOps</span>
+              <span class="skill-tag">Clinical Analytics</span>
+              <span class="skill-tag">Federated Learning</span>
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">Apache Airflow</span>
+              <span class="skill-tag">Power BI</span>
+              <span class="skill-tag">ETL Pipelines</span>
+              <span class="skill-tag">Credit Risk</span>
+              <span class="skill-tag">Clinical AI</span>
+              <span class="skill-tag">Sports Analytics</span>
+              <span class="skill-tag">SQL</span>
+              <span class="skill-tag">Docker</span>
+              <span class="skill-tag">PyTorch</span>
+              <span class="skill-tag">TensorFlow</span>
+              <span class="skill-tag">Time-Series</span>
+              <span class="skill-tag">RAG</span>
+            </div>
+          </div>
+
+          <!-- Recent publications -->
+          <div class="sidebar-card">
+            <p class="sidebar-card-title">Academic Publications</p>
+            <div style="display:flex;flex-direction:column;gap:1rem;">
+              <div>
+                <span style="font-family:var(--font-mono);font-size:.68rem;color:var(--forest);">2026 · Data Modeling</span>
+                <p style="font-size:.82rem;color:var(--text-0);margin-top:3px;line-height:1.4;">Early Prediction of Postprandial Glycemic Response in Gestational Diabetes Using CGM</p>
+              </div>
+              <div>
+                <span style="font-family:var(--font-mono);font-size:.68rem;color:var(--forest);">2020 · J. Biomater</span>
+                <p style="font-size:.82rem;color:var(--text-0);margin-top:3px;line-height:1.4;">Bioactive Glass in the Modern Biological World — Comprehensive Overview</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Certifications highlight -->
+          <div class="sidebar-card">
+            <p class="sidebar-card-title">Key Credentials</p>
+            <div style="display:flex;flex-direction:column;gap:.6rem;">
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:.82rem;color:var(--text-1);">Quantitative Research</span>
+                <span style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-3);">JPMorgan</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:.82rem;color:var(--text-1);">Power BI Simulation</span>
+                <span style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-3);">PwC</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:.82rem;color:var(--text-1);">Data Analytics</span>
+                <span style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-3);">KPMG</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:.82rem;color:var(--text-1);">Data Warehouse</span>
+                <span style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-3);">Udemy</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-size:.82rem;color:var(--text-1);">Snowflake</span>
+                <span style="font-family:var(--font-mono);font-size:.68rem;color:var(--text-3);">Datacamp</span>
+              </div>
+            </div>
+          </div>
+
+        </aside>
+
+      </div><!-- /blog-grid -->
+    </div><!-- /container -->
+
+    <!-- Bottom recruiter CTA banner -->
+    <section style="background:var(--bg-1);border-top:1px solid var(--bg-3);padding:4rem 0;" aria-labelledby="hire-heading">
+      <div class="container" style="text-align:center;max-width:640px;">
+        <span class="mono label-tag" style="display:block;margin-bottom:1rem;">[ Open to Opportunities ]</span>
+        <h2 id="hire-heading" style="font-family:var(--font-serif);font-size:clamp(1.7rem,3vw,2.5rem);color:var(--text-0);font-weight:400;margin-bottom:1rem;letter-spacing:-.01em;">
+          Looking to hire a Data Scientist<br />or AI Engineer?
+        </h2>
+        <p style="color:var(--text-2);font-size:1rem;line-height:1.7;margin-bottom:2rem;">
+          I bring hands-on experience across the full ML lifecycle — from ETL pipelines and data warehousing to model deployment, MLOps, and BI dashboards. Available for full-time roles, contract work, and research collaborations.
+        </p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <a href="mailto:arkosaha.ruet@gmail.com?subject=Data%20Scientist%20Opportunity" class="btn btn-primary" id="bottom-hire-cta" aria-label="Email Arko about a data science role">
+            Get in Touch
+          </a>
+          <a href="https://linkedin.com/in/arko-saha-ds" class="btn btn-ghost" target="_blank" rel="noopener" aria-label="View Arko's LinkedIn profile">
+            View LinkedIn
+          </a>
+          <a href="CV_Arko_Saha.pdf" class="btn btn-ghost" target="_blank" rel="noopener" aria-label="Download Arko's CV">
+            Download CV
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p class="mono footer-copy">© 2025 Arko Saha · <a href="index.html">Portfolio</a> · <a href="blog.html">Blog</a></p>
+      <p class="mono footer-right">London, UK · Open to opportunities</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    /* Topic filter */
+    const topicBtns = document.querySelectorAll('.topic-btn');
+    const blogCards = document.querySelectorAll('.blog-card[data-topics]');
+
+    topicBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        topicBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const topic = btn.dataset.topic;
+
+        blogCards.forEach(card => {
+          const topics = card.dataset.topics || '';
+          const show = topic === 'all' || topics.includes(topic);
+          card.style.display = show ? '' : 'none';
+          if (show) card.classList.add('in-view');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

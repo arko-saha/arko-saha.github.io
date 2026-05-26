@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arko Saha — Data Scientist & AI Engineer</title>
+  <meta name="description" content="Portfolio of Arko Saha — Data Scientist and AI Engineer specialising in Machine Learning, Deep Learning, Computer Vision, Quantitative Analysis, MLOps, Sports Analytics, and Clinical Data Analytics." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════ CURSOR GLOW ═══════════════════════════ -->
+  <div class="cursor-glow" id="cursorGlow"></div>
+
+  <!-- ═══════════════════════════ GRID OVERLAY ════════════════════════ -->
+  <div class="grid-overlay" aria-hidden="true"></div>
+
+  <!-- ═══════════════════════════ NAV ══════════════════════════════════ -->
+  <nav class="nav" id="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo" aria-label="Home">
+        <span class="nav-logo-monogram">AS</span>
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="#about" class="nav-link" data-index="01">About</a></li>
+        <li><a href="#skills" class="nav-link" data-index="02">Skills</a></li>
+        <li><a href="#experience" class="nav-link" data-index="03">Experience</a></li>
+        <li><a href="#leadership" class="nav-link" data-index="04">Leadership</a></li>
+        <li><a href="#projects" class="nav-link" data-index="05">Projects</a></li>
+        <li><a href="#publications" class="nav-link" data-index="06">Publications</a></li>
+        <li><a href="#contact" class="nav-link" data-index="07">Contact</a></li>
+        <li><a href="blog.html" class="nav-link" data-index="08">Blog</a></li>
+      </ul>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile nav drawer -->
+  <div class="nav-drawer" id="navDrawer" aria-hidden="true">
+    <ul role="list">
+      <li><a href="#about" class="drawer-link">01 — About</a></li>
+      <li><a href="#skills" class="drawer-link">02 — Skills</a></li>
+      <li><a href="#experience" class="drawer-link">03 — Experience</a></li>
+      <li><a href="#leadership" class="drawer-link">04 — Leadership</a></li>
+      <li><a href="#projects" class="drawer-link">05 — Projects</a></li>
+      <li><a href="#publications" class="drawer-link">06 — Publications</a></li>
+      <li><a href="#contact" class="drawer-link">07 — Contact</a></li>
+      <li><a href="blog.html" class="drawer-link">08 — Blog</a></li>
+    </ul>
+  </div>
+
+  <main id="main-content">
+
+    <!-- ═══════════════════════════ HERO ════════════════════════════════ -->
+    <section id="hero" class="hero" aria-label="Introduction">
+      <div class="hero-bg-text" aria-hidden="true">DATA</div>
+
+      <div class="hero-content">
+
+        <!-- LEFT: text content -->
+        <div class="hero-left">
+          <div class="hero-label reveal-up" style="animation-delay:.1s">
+            <span class="mono label-tag">[ MSc Data Science · AI Engineer ]</span>
+          </div>
+
+          <h1 class="hero-name reveal-up" style="animation-delay:.25s">
+            Arko<br /><em>Saha</em>
+          </h1>
+
+          <p class="hero-tagline reveal-up" style="animation-delay:.4s">
+            Turning raw data into decisions &mdash; <br class="br-md"/>
+            from EHR pipelines to foundation models.
+          </p>
+
+          <div class="hero-cta reveal-up" style="animation-delay:.55s">
+            <a href="#about" class="btn btn-primary">Explore my work</a>
+            <a href="CV_Arko_Saha.pdf" class="btn btn-ghost" target="_blank" rel="noopener">Download CV</a>
+          </div>
+
+          <div class="hero-stats reveal-up" style="animation-delay:.7s" aria-label="Key stats">
+            <div class="hero-stat">
+              <span class="stat-num" data-target="7">0</span><span class="stat-unit">+</span>
+              <span class="stat-label">Years in tech</span>
+            </div>
+            <div class="hero-stat-divider" aria-hidden="true"></div>
+            <div class="hero-stat">
+              <span class="stat-num" data-target="2">0</span>
+              <span class="stat-label">Publications</span>
+            </div>
+            <div class="hero-stat-divider" aria-hidden="true"></div>
+            <div class="hero-stat">
+              <span class="stat-num" data-target="12">0</span><span class="stat-unit">+</span>
+              <span class="stat-label">Certifications</span>
+            </div>
+          </div>
+        </div><!-- /hero-left -->
+
+        <!-- RIGHT: solarpunk orbital skill visualization -->
+        <div class="hero-visual reveal-up" style="animation-delay:.5s" aria-hidden="true">
+          <!-- Organic leaf decorations -->
+          <div class="hero-leaf hero-leaf-1"></div>
+          <div class="hero-leaf hero-leaf-2"></div>
+          <div class="hero-leaf hero-leaf-3"></div>
+
+          <div class="orbital-system">
+            <!-- Center -->
+            <div class="orbital-center">AS</div>
+
+            <!-- Ring 1: Core tools — green nodes -->
+            <div class="orbit-ring orbit-ring-1">
+              <!-- Node at 0deg (top) -->
+              <div class="orbit-node-wrap" style="transform:rotate(0deg)">
+                <div class="orbit-node" style="transform:translate(-23px,-103px) rotate(0deg)">SQL</div>
+              </div>
+              <!-- Node at 120deg -->
+              <div class="orbit-node-wrap" style="transform:rotate(120deg)">
+                <div class="orbit-node" style="transform:translate(-23px,-103px) rotate(-120deg)">Python</div>
+              </div>
+              <!-- Node at 240deg -->
+              <div class="orbit-node-wrap" style="transform:rotate(240deg)">
+                <div class="orbit-node" style="transform:translate(-23px,-103px) rotate(-240deg)">Airflow</div>
+              </div>
+            </div>
+
+            <!-- Ring 2: MLOps + BI — gold nodes -->
+            <div class="orbit-ring orbit-ring-2">
+              <div class="orbit-node-wrap" style="transform:rotate(60deg)">
+                <div class="orbit-node" style="transform:translate(-26px,-151px) rotate(-60deg)">MLOps</div>
+              </div>
+              <div class="orbit-node-wrap" style="transform:rotate(180deg)">
+                <div class="orbit-node" style="transform:translate(-26px,-151px) rotate(-180deg)">Power BI</div>
+              </div>
+              <div class="orbit-node-wrap" style="transform:rotate(300deg)">
+                <div class="orbit-node" style="transform:translate(-26px,-151px) rotate(-300deg)">Docker</div>
+              </div>
+            </div>
+
+            <!-- Ring 3: Specialisms — sienna nodes -->
+            <div class="orbit-ring orbit-ring-3">
+              <div class="orbit-node-wrap" style="transform:rotate(30deg)">
+                <div class="orbit-node" style="transform:translate(-28px,-193px) rotate(-30deg)">Clinical AI</div>
+              </div>
+              <div class="orbit-node-wrap" style="transform:rotate(150deg)">
+                <div class="orbit-node" style="transform:translate(-28px,-193px) rotate(-150deg)">LLMs</div>
+              </div>
+              <div class="orbit-node-wrap" style="transform:rotate(270deg)">
+                <div class="orbit-node" style="transform:translate(-28px,-193px) rotate(-270deg)">EHR</div>
+              </div>
+            </div>
+          </div><!-- /orbital-system -->
+        </div><!-- /hero-visual -->
+
+      </div><!-- /hero-content -->
+
+      <div class="hero-scroll-hint" aria-hidden="true">
+        <span class="mono">scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ ABOUT ═══════════════════════════════ -->
+    <section id="about" class="section about-section" aria-labelledby="about-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="mono section-num">01</span>
+          <h2 id="about-heading" class="section-title">About</h2>
+          <div class="section-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-text">
+            <p class="about-lead reveal-up">
+              I'm a <strong>Data Scientist and AI Engineer</strong> based in London, UK — 
+              with an MSc in Data Science from the University of Roehampton and 
+              a background spanning mechatronics, clinical informatics, and full-stack ML systems.
+            </p>
+            <p class="reveal-up" style="animation-delay:.1s">
+              My work sits at the intersection of <em>rigorous engineering</em> and 
+              <em>applied research</em>: I build predictive systems, ETL pipelines, and 
+              intelligent dashboards for problems that matter — from sepsis forecasting 
+              with federated learning to FICO-grade credit risk bucketing.
+            </p>
+            <p class="reveal-up" style="animation-delay:.2s">
+              When I'm not wrangling data, I contribute to open-source ML toolkits 
+              and explore the frontiers of foundation models applied to electronic health records.
+            </p>
+
+            <div class="about-badges reveal-up" style="animation-delay:.3s">
+              <span class="badge">Machine Learning</span>
+              <span class="badge">Deep Learning</span>
+              <span class="badge">MLOps</span>
+              <span class="badge">EHR Analytics</span>
+              <span class="badge">LLMs</span>
+              <span class="badge">Reinforcement Learning</span>
+              <span class="badge">Time-Series</span>
+              <span class="badge">RAG</span>
+            </div>
+          </div>
+
+          <div class="about-card reveal-up" style="animation-delay:.15s">
+            <div class="about-card-header">
+              <span class="mono label-tag">[ profile ]</span>
+            </div>
+            <ul class="about-details" role="list">
+              <li>
+                <span class="mono detail-key">location</span>
+                <span class="detail-val">London, UK</span>
+              </li>
+              <li>
+                <span class="mono detail-key">degree</span>
+                <span class="detail-val">MSc Data Science, Roehampton</span>
+              </li>
+              <li>
+                <span class="mono detail-key">languages</span>
+                <span class="detail-val">English · Bengali</span>
+              </li>
+              <li>
+                <span class="mono detail-key">available</span>
+                <span class="detail-val available-dot">Open to opportunities</span>
+              </li>
+            </ul>
+            <div class="about-card-links">
+              <a href="mailto:arkosaha.ruet@gmail.com" class="card-link mono" aria-label="Email Arko">email ↗</a>
+              <a href="https://linkedin.com/in/arko-saha-ds" class="card-link mono" target="_blank" rel="noopener" aria-label="LinkedIn profile">linkedin ↗</a>
+              <a href="https://github.com/arko-saha" class="card-link mono" target="_blank" rel="noopener" aria-label="GitHub profile">github ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Education timeline -->
+        <div class="edu-block reveal-up" style="animation-delay:.2s">
+          <h3 class="subsection-title mono">// Education</h3>
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot" aria-hidden="true"></div>
+              <div class="timeline-content">
+                <span class="timeline-date mono">Sep 2022 – Nov 2023</span>
+                <h4 class="timeline-role">MSc in Data Science</h4>
+                <p class="timeline-org">University of Roehampton, London, UK</p>
+                <p class="timeline-note">International Excellence Scholarship · Dissertation: Data-driven cricket analytics with ETL pipelines over 400k+ records</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot" aria-hidden="true"></div>
+              <div class="timeline-content">
+                <span class="timeline-date mono">Mar 2014 – Dec 2018</span>
+                <h4 class="timeline-role">BSc in Mechatronics Engineering</h4>
+                <p class="timeline-org">Rajshahi University of Engineering & Technology, Bangladesh</p>
+                <p class="timeline-note">Academic Excellence Scholarship · Thesis: ANN-based transmission line fault location</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ SKILLS ══════════════════════════════ -->
+    <section id="skills" class="section skills-section" aria-labelledby="skills-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="mono section-num">02</span>
+          <h2 id="skills-heading" class="section-title">Technical Skills</h2>
+          <div class="section-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="skills-grid">
+          <div class="skill-category reveal-up" style="animation-delay:.05s">
+            <h3 class="skill-cat-title">
+              <span class="skill-cat-icon" aria-hidden="true">⬡</span>
+              Data Engineering & ETL
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Apache Airflow</span>
+              <span class="skill-tag">Data Warehousing</span>
+              <span class="skill-tag">ETL/ELT Pipelines</span>
+              <span class="skill-tag">Dimensional Modeling</span>
+              <span class="skill-tag">Star/Snowflake Schema</span>
+              <span class="skill-tag">Snowflake</span>
+              <span class="skill-tag">SQL Server</span>
+              <span class="skill-tag">PySpark</span>
+              <span class="skill-tag">MySQL</span>
+            </div>
+          </div>
+
+          <div class="skill-category reveal-up" style="animation-delay:.1s">
+            <h3 class="skill-cat-title">
+              <span class="skill-cat-icon" aria-hidden="true">⬡</span>
+              Model Development & Analytics
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Python</span>
+              <span class="skill-tag">NumPy</span>
+              <span class="skill-tag">Scikit-learn</span>
+              <span class="skill-tag">Pandas</span>
+              <span class="skill-tag">TensorFlow</span>
+              <span class="skill-tag">PyTorch</span>
+              <span class="skill-tag">Statistical Analysis</span>
+              <span class="skill-tag">EDA</span>
+              <span class="skill-tag">A/B Testing</span>
+            </div>
+          </div>
+
+          <div class="skill-category reveal-up" style="animation-delay:.15s">
+            <h3 class="skill-cat-title">
+              <span class="skill-cat-icon" aria-hidden="true">⬡</span>
+              MLOps & Infrastructure
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Docker</span>
+              <span class="skill-tag">Git</span>
+              <span class="skill-tag">Linux</span>
+              <span class="skill-tag">Flask</span>
+              <span class="skill-tag">GCP</span>
+              <span class="skill-tag">ML System Design</span>
+              <span class="skill-tag">Agile</span>
+            </div>
+          </div>
+
+          <div class="skill-category reveal-up" style="animation-delay:.2s">
+            <h3 class="skill-cat-title">
+              <span class="skill-cat-icon" aria-hidden="true">⬡</span>
+              BI & Visualisation
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag">Power BI</span>
+              <span class="skill-tag">Tableau</span>
+              <span class="skill-tag">DAX</span>
+              <span class="skill-tag">Advanced Excel</span>
+              <span class="skill-tag">Looker Studio</span>
+              <span class="skill-tag">Plotly / Seaborn</span>
+              <span class="skill-tag">Figma</span>
+              <span class="skill-tag">Streamlit</span>
+            </div>
+          </div>
+
+          <div class="skill-category reveal-up" style="animation-delay:.25s">
+            <h3 class="skill-cat-title">
+              <span class="skill-cat-icon" aria-hidden="true">⬡</span>
+              Databases & Big Data
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag">SQL</span>
+              <span class="skill-tag">PostgreSQL</span>
+              <span class="skill-tag">MongoDB</span>
+              <span class="skill-tag">NoSQL</span>
+              <span class="skill-tag">SQLite</span>
+              <span class="skill-tag">CTEs & Window Functions</span>
+              <span class="skill-tag">Stored Procedures</span>
+            </div>
+          </div>
+
+          <div class="skill-category reveal-up" style="animation-delay:.3s">
+            <h3 class="skill-cat-title">
+              <span class="skill-cat-icon" aria-hidden="true">⬡</span>
+              Specialisations
+            </h3>
+            <div class="skill-tags">
+              <span class="skill-tag">LLMs</span>
+              <span class="skill-tag">RAG</span>
+              <span class="skill-tag">Foundation Models</span>
+              <span class="skill-tag">Reinforcement Learning</span>
+              <span class="skill-tag">EHR Analytics</span>
+              <span class="skill-tag">OMOP CDM</span>
+              <span class="skill-tag">Computer Vision</span>
+              <span class="skill-tag">Time-Series</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proficiency bars -->
+        <div class="proficiency-block reveal-up" style="animation-delay:.2s">
+          <h3 class="subsection-title mono">// Core Proficiencies</h3>
+          <div class="bars">
+            <div class="bar-row">
+              <span class="bar-label mono">SQL &amp; Data Modelling</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" aria-label="SQL proficiency 95%">
+                <div class="bar-fill" data-width="95"></div>
+              </div>
+              <span class="bar-pct mono">95%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label mono">Python (pandas, sklearn)</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="Python proficiency 92%">
+                <div class="bar-fill" data-width="92"></div>
+              </div>
+              <span class="bar-pct mono">92%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label mono">Power BI &amp; DAX</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100" aria-label="Power BI proficiency 88%">
+                <div class="bar-fill" data-width="88"></div>
+              </div>
+              <span class="bar-pct mono">88%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label mono">Apache Airflow / ETL</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="Apache Airflow proficiency 85%">
+                <div class="bar-fill" data-width="85"></div>
+              </div>
+              <span class="bar-pct mono">85%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label mono">Docker &amp; Containerisation</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Docker proficiency 80%">
+                <div class="bar-fill" data-width="80"></div>
+              </div>
+              <span class="bar-pct mono">80%</span>
+            </div>
+            <div class="bar-row">
+              <span class="bar-label mono">TensorFlow / PyTorch</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100" aria-label="TensorFlow/PyTorch proficiency 78%">
+                <div class="bar-fill" data-width="78"></div>
+              </div>
+              <span class="bar-pct mono">78%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ EXPERIENCE ══════════════════════════ -->
+    <section id="experience" class="section experience-section" aria-labelledby="experience-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="mono section-num">03</span>
+          <h2 id="experience-heading" class="section-title">Experience</h2>
+          <div class="section-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="exp-timeline">
+
+          <article class="exp-item reveal-up" style="animation-delay:.05s">
+            <div class="exp-meta">
+              <span class="exp-date mono">Jan 2024 — Present</span>
+              <span class="exp-badge current">Current</span>
+            </div>
+            <div class="exp-body">
+              <h3 class="exp-role">Freelance Data Analyst</h3>
+              <p class="exp-org">Independent Contractor · Fiverr</p>
+              <ul class="exp-bullets" role="list">
+                <li>Designed and deployed predictive ML models (scikit-learn, pandas) forecasting supply chain trends, yielding <strong>20% improvement</strong> in inventory accuracy</li>
+                <li>Architected automated ETL pipelines integrating multi-source data, reducing retrieval time by <strong>~60%</strong></li>
+                <li>Delivered production-ready analytics dashboards (SQL, Power BI, DAX) driving <strong>15% increase</strong> in operational efficiency</li>
+                <li>Built star and snowflake dimensional models for retail clients optimising query performance across sales and customer domains</li>
+              </ul>
+              <div class="exp-tags">
+                <span class="exp-tag">Python</span>
+                <span class="exp-tag">scikit-learn</span>
+                <span class="exp-tag">SQL</span>
+                <span class="exp-tag">Power BI</span>
+                <span class="exp-tag">DAX</span>
+                <span class="exp-tag">ETL</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="exp-item reveal-up" style="animation-delay:.1s">
+            <div class="exp-meta">
+              <span class="exp-date mono">Sep 2023 — Nov 2023</span>
+            </div>
+            <div class="exp-body">
+              <h3 class="exp-role">Graduate Support Analyst Intern</h3>
+              <p class="exp-org">University of Roehampton</p>
+              <ul class="exp-bullets" role="list">
+                <li>Ran large-scale EDA and validation pipelines (Python, Power BI, DAX) raising data accuracy by <strong>30%</strong></li>
+                <li>Optimised data pipeline processing <strong>7,000+ student records</strong> daily, reducing processing time by <strong>15%</strong></li>
+                <li>Collaborated cross-functionally to streamline student record management and placement reporting</li>
+              </ul>
+              <div class="exp-tags">
+                <span class="exp-tag">Python</span>
+                <span class="exp-tag">Excel</span>
+                <span class="exp-tag">Power BI</span>
+                <span class="exp-tag">EDA</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="exp-item reveal-up" style="animation-delay:.15s">
+            <div class="exp-meta">
+              <span class="exp-date mono">Aug 2020 — Aug 2022</span>
+            </div>
+            <div class="exp-body">
+              <h3 class="exp-role">Medical Documentation Specialist</h3>
+              <p class="exp-org">Augmedix Limited</p>
+              <ul class="exp-bullets" role="list">
+                <li>Assisted physicians documenting patient interactions in EHR systems during live care (EPIC, CERNER, eClinicalWorks) across Pediatrics, Gastroenterology, and Primary Care</li>
+                <li>Reviewed medical records for accuracy, conducted regulatory compliance audits, and collaborated with providers on patient history updates</li>
+              </ul>
+              <div class="exp-tags">
+                <span class="exp-tag">EPIC</span>
+                <span class="exp-tag">CERNER</span>
+                <span class="exp-tag">EHR</span>
+                <span class="exp-tag">Healthcare</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="exp-item reveal-up" style="animation-delay:.2s">
+            <div class="exp-meta">
+              <span class="exp-date mono">Jan 2019 — Mar 2020</span>
+            </div>
+            <div class="exp-body">
+              <h3 class="exp-role">Automation Support Engineer</h3>
+              <p class="exp-org">Sincos Automation Technologies Limited</p>
+              <ul class="exp-bullets" role="list">
+                <li>Deployed computer vision inspection systems reducing manufacturing defects by <strong>25%</strong> and increasing throughput by <strong>14%</strong></li>
+                <li>Automated daily operations via Power BI, VBA, and DAX, delivering a live KPI dashboard achieving a <strong>34% efficiency gain</strong></li>
+              </ul>
+              <div class="exp-tags">
+                <span class="exp-tag">Computer Vision</span>
+                <span class="exp-tag">Power BI</span>
+                <span class="exp-tag">VBA</span>
+                <span class="exp-tag">Automation</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ LEADERSHIP ══════════════════════════ -->
+    <section id="leadership" class="section leadership-section" aria-labelledby="leadership-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="mono section-num">04</span>
+          <h2 id="leadership-heading" class="section-title">Leadership</h2>
+          <div class="section-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="leadership-items">
+          <div class="leadership-item reveal-up" style="animation-delay:.05s">
+            <span class="mono ldr-date">Oct 2022 – Sep 2023</span>
+            <p class="ldr-role">Student Representative, School of Arts &amp; Digital Industries</p>
+            <p class="ldr-org">University of Roehampton</p>
+          </div>
+          <div class="leadership-item reveal-up" style="animation-delay:.15s">
+            <span class="mono ldr-date">Nov 2022 – Sep 2023</span>
+            <p class="ldr-role">Student Ambassador, Recruitment &amp; Student Outreach</p>
+            <p class="ldr-org">University of Roehampton</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ PROJECTS ════════════════════════════ -->
+    <section id="projects" class="section projects-section" aria-labelledby="projects-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="mono section-num">05</span>
+          <h2 id="projects-heading" class="section-title">Selected Projects</h2>
+          <div class="section-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="projects-grid">
+
+          <article class="project-card reveal-up" style="animation-delay:.05s">
+            <div class="project-card-inner">
+              <div class="project-num mono">P.01</div>
+              <div class="project-top">
+                <h3 class="project-title">FICO-Quant</h3>
+                <div class="project-icon" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="16" width="4" height="10" rx="1" fill="currentColor" opacity=".6"/>
+                    <rect x="8" y="11" width="4" height="15" rx="1" fill="currentColor" opacity=".75"/>
+                    <rect x="14" y="6" width="4" height="20" rx="1" fill="currentColor"/>
+                    <rect x="20" y="2" width="4" height="24" rx="1" fill="currentColor" opacity=".85"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="project-subtitle">Production-Scale Credit Risk Bucketing & Optimisation Toolkit</p>
+              <p class="project-desc">Modular FICO bucketing framework optimising segmentation strategies (Equal Width, Equal Frequency, IV-based), achieving <strong>0.85 Gini</strong> discriminatory power and 100% monotonicity in default rate progression.</p>
+              <div class="project-footer">
+                <div class="project-tags">
+                  <span class="ptag">Python</span>
+                  <span class="ptag">scikit-learn</span>
+                  <span class="ptag">Credit Risk</span>
+                  <span class="ptag">Optimization</span>
+                </div>
+                <a href="https://github.com/arko-saha/FICO-Score-Bucket" target="_blank" rel="noopener" class="btn-project" aria-label="View FICO-Quant on GitHub">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  View on GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal-up" style="animation-delay:.12s">
+            <div class="project-card-inner">
+              <div class="project-num mono">P.02</div>
+              <div class="project-top">
+                <h3 class="project-title">Containerised Weather ETL</h3>
+                <div class="project-icon" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 4 L14 24 M4 14 L24 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".5"/>
+                    <circle cx="14" cy="14" r="8" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="14" cy="14" r="3" fill="currentColor"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="project-subtitle">Production-grade Weather Data Ingestion Pipeline</p>
+              <p class="project-desc">Engineered a production-grade ingestion layer using Apache Airflow and Astro to orchestrate real-time weather ETL from Open-Meteo into PostgreSQL via PostgresHook and dBeaver.</p>
+              <div class="project-footer">
+                <div class="project-tags">
+                  <span class="ptag">Apache Airflow</span>
+                  <span class="ptag">Docker</span>
+                  <span class="ptag">PostgreSQL</span>
+                  <span class="ptag">ETL</span>
+                </div>
+                <a href="https://github.com/arko-saha/Building-End-To-End-ETL-Pipeline-For-Weather-Monitoring-Using-AirFlow-And-Astro" target="_blank" rel="noopener" class="btn-project" aria-label="View Weather ETL on GitHub">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  View on GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal-up" style="animation-delay:.19s">
+            <div class="project-card-inner">
+              <div class="project-num mono">P.03</div>
+              <div class="project-top">
+                <h3 class="project-title">MLOps Asset Valuation Engine</h3>
+                <div class="project-icon" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polyline points="3,22 9,14 14,18 19,9 25,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    <circle cx="25" cy="6" r="2" fill="currentColor"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="project-subtitle">End-to-End Predictive Analytics & Asset Valuation</p>
+              <p class="project-desc">Architected an asset-pricing engine for natural gas contracts, automating P&L calculations and trading strategy optimisation via ARIMA-based time-series pipeline and an interactive Streamlit dashboard.</p>
+              <div class="project-footer">
+                <div class="project-tags">
+                  <span class="ptag">ARIMA</span>
+                  <span class="ptag">Streamlit</span>
+                  <span class="ptag">Python</span>
+                  <span class="ptag">Time-Series</span>
+                </div>
+                <a href="https://github.com/arko-saha/Prototype-Pricing-Model" target="_blank" rel="noopener" class="btn-project" aria-label="View MLOps Asset Valuation on GitHub">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  View on GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal-up" style="animation-delay:.26s">
+            <div class="project-card-inner">
+              <div class="project-num mono">P.04</div>
+              <div class="project-top">
+                <h3 class="project-title">Cricket Analytics Platform</h3>
+                <div class="project-icon" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="14" cy="14" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M14 8 L14 14 L19 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="project-subtitle">MSc Dissertation — Data-driven Cricket Projection</p>
+              <p class="project-desc">Incorporated mathematical models, ML, and interactive dashboards with KPIs to enhance player evaluation. ETL pipelines processed <strong>400k+ ball-by-ball records</strong> from ESPN Cricinfo and Cricsheet into structured fact tables.</p>
+              <div class="project-footer">
+                <div class="project-tags">
+                  <span class="ptag">Python</span>
+                  <span class="ptag">Tableau</span>
+                  <span class="ptag">ETL</span>
+                  <span class="ptag">Data Warehousing</span>
+                </div>
+                <a href="https://github.com/arko-saha/Beyond-Instinct-Data-driven-Cricket-Projection" target="_blank" rel="noopener" class="btn-project" aria-label="View Cricket Analytics on GitHub">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  View on GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal-up" style="animation-delay:.33s">
+            <div class="project-card-inner">
+              <div class="project-num mono">P.05</div>
+              <div class="project-top">
+                <h3 class="project-title">Federated Foundation Models</h3>
+                <div class="project-icon" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="14" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    <circle cx="5" cy="21" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    <circle cx="23" cy="21" r="3" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="14" y1="8" x2="5" y2="18" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="14" y1="8" x2="23" y2="18" stroke="currentColor" stroke-width="1.5"/>
+                    <line x1="8" y1="21" x2="20" y2="21" stroke="currentColor" stroke-width="1.5"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="project-subtitle">Safe Offline RL for Personalised Sepsis Care</p>
+              <p class="project-desc">Research-grade implementation of hierarchical and multimodal architectures for personalised sepsis treatment using safe offline reinforcement learning on MIMIC-III clinical data with federated learning.</p>
+              <div class="project-footer">
+                <div class="project-tags">
+                  <span class="ptag">PyTorch</span>
+                  <span class="ptag">Federated Learning</span>
+                  <span class="ptag">RL</span>
+                  <span class="ptag">MIMIC-III</span>
+                </div>
+                <a href="https://github.com/arko-saha/Clinical-Intelligence-MIMIC-III" target="_blank" rel="noopener" class="btn-project" aria-label="View Federated Foundation Models on GitHub">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  View on GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+
+          <article class="project-card reveal-up" style="animation-delay:.4s">
+            <div class="project-card-inner">
+              <div class="project-num mono">P.06</div>
+              <div class="project-top">
+                <h3 class="project-title">Brain Tumour Detection</h3>
+                <div class="project-icon" aria-hidden="true">
+                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 4 C8.5 4 4 8.5 4 14 C4 19.5 8.5 24 14 24 C19.5 24 24 19.5 24 14 C24 8.5 19.5 4 14 4Z" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M14 8 C14 8 10 10 10 14 C10 18 14 20 14 20 C14 20 18 18 18 14 C18 10 14 8 14 8Z" fill="currentColor" opacity=".3"/>
+                    <circle cx="14" cy="14" r="2" fill="currentColor"/>
+                  </svg>
+                </div>
+              </div>
+              <p class="project-subtitle">Deep Learning Ensemble for MRI Image Analysis</p>
+              <p class="project-desc">Ensemble deep learning approach for early detection of brain tumours from MRI images, combining multiple CNN architectures with TensorFlow to improve diagnostic sensitivity and specificity.</p>
+              <div class="project-footer">
+                <div class="project-tags">
+                  <span class="ptag">TensorFlow</span>
+                  <span class="ptag">CNN</span>
+                  <span class="ptag">Computer Vision</span>
+                  <span class="ptag">Medical AI</span>
+                </div>
+                <a href="https://github.com/arko-saha/NeuroScan-AI" target="_blank" rel="noopener" class="btn-project" aria-label="View Brain Tumour Detection on GitHub">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                  View on GitHub
+                </a>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ PUBLICATIONS ═════════════════════════ -->
+    <section id="publications" class="section publications-section" aria-labelledby="pubs-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="mono section-num">06</span>
+          <h2 id="pubs-heading" class="section-title">Publications</h2>
+          <div class="section-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="pubs-grid">
+          <article class="pub-card reveal-up" style="animation-delay:.05s">
+            <div class="pub-num mono">01</div>
+            <div class="pub-body">
+              <span class="pub-year mono">2026</span>
+              <h3 class="pub-title">Early Prediction of Postprandial Glycemic Response in Gestational Diabetes Using Continuous Glucose Monitoring and Gradient Boosting Models</h3>
+              <p class="pub-authors">Jafor, A. U., Puja, P. D., Biswas, S., <strong>Saha, A.</strong>, Mithu, K., & AbdullahAlMamun, K.</p>
+              <p class="pub-journal mono">Data Modeling, 7(1), 1–7</p>
+              <div class="pub-tags">
+                <span class="ptag">Gradient Boosting</span>
+                <span class="ptag">CGM</span>
+                <span class="ptag">Diabetes</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="pub-card reveal-up" style="animation-delay:.12s">
+            <div class="pub-num mono">02</div>
+            <div class="pub-body">
+              <span class="pub-year mono">2020</span>
+              <h3 class="pub-title">A comprehensive overview of the pertinence and possibilities of bioactive glass in the modern biological world</h3>
+              <p class="pub-authors">Haque, J., Munna, A. H., Ayon, A. S. R., Shaitee, Z. R., & <strong>Saha, A.</strong></p>
+              <p class="pub-journal mono">J. Biomater, 4, 23</p>
+              <div class="pub-tags">
+                <span class="ptag">Biomaterials</span>
+                <span class="ptag">Review</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Certifications -->
+        <div class="certs-block reveal-up" style="animation-delay:.2s">
+          <h3 class="subsection-title mono">// Selected Certifications</h3>
+          <div class="certs-grid">
+            <div class="cert-item">
+              <span class="cert-issuer mono">JPMorgan / Forage</span>
+              <span class="cert-name">Quantitative Research</span>
+              <span class="cert-year mono">2024</span>
+            </div>
+            <div class="cert-item">
+              <span class="cert-issuer mono">PwC / Forage</span>
+              <span class="cert-name">Power BI Simulation</span>
+              <span class="cert-year mono">2023</span>
+            </div>
+            <div class="cert-item">
+              <span class="cert-issuer mono">Udemy</span>
+              <span class="cert-name">Data Warehouse Concepts</span>
+              <span class="cert-year mono">2025</span>
+            </div>
+            <div class="cert-item">
+              <span class="cert-issuer mono">Datacamp</span>
+              <span class="cert-name">Snowflake: Manipulation & Intro</span>
+              <span class="cert-year mono">2025</span>
+            </div>
+            <div class="cert-item">
+              <span class="cert-issuer mono">Datacamp</span>
+              <span class="cert-name">SQL: Intermediate & Intro</span>
+              <span class="cert-year mono">2025</span>
+            </div>
+            <div class="cert-item">
+              <span class="cert-issuer mono">KPMG / Forage</span>
+              <span class="cert-name">Data Analytics Consulting</span>
+              <span class="cert-year mono">2023</span>
+            </div>
+            <div class="cert-item">
+              <span class="cert-issuer mono">edX</span>
+              <span class="cert-name">Predictive Analytics using ML</span>
+              <span class="cert-year mono">2021</span>
+            </div>
+            <div class="cert-item">
+              <span class="cert-issuer mono">Coursera</span>
+              <span class="cert-name">Microsoft Power BI Masterclass</span>
+              <span class="cert-year mono">2020</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════ CONTACT ═════════════════════════════ -->
+    <section id="contact" class="section contact-section" aria-labelledby="contact-heading">
+      <div class="container">
+        <div class="section-header">
+          <span class="mono section-num">07</span>
+          <h2 id="contact-heading" class="section-title">Get in Touch</h2>
+          <div class="section-rule" aria-hidden="true"></div>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-text reveal-up">
+            <p class="contact-lead">
+              I'm currently open to new opportunities — whether that's a full-time role, 
+              freelance collaboration, or a research conversation.
+            </p>
+            <p>Feel free to reach out by email or connect on LinkedIn.</p>
+          </div>
+
+          <div class="contact-links reveal-up" style="animation-delay:.1s">
+            <a href="mailto:arkosaha.ruet@gmail.com" class="contact-link-card" id="contact-email">
+              <div class="clc-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M2 8 L12 14 L22 8" stroke="currentColor" stroke-width="1.5"/>
+                </svg>
+              </div>
+              <div class="clc-body">
+                <span class="clc-label mono">Email</span>
+                <span class="clc-value">arkosaha.ruet@gmail.com</span>
+              </div>
+              <span class="clc-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a href="https://linkedin.com/in/arko-saha-ds" class="contact-link-card" id="contact-linkedin" target="_blank" rel="noopener">
+              <div class="clc-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="2" y="2" width="20" height="20" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                  <circle cx="7.5" cy="8" r="1.5" fill="currentColor"/>
+                  <line x1="7.5" y1="11" x2="7.5" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <path d="M11 11 V18 M11 13.5 C11 12 12 11 13.5 11 C15 11 16 12 16 13.5 V18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="clc-body">
+                <span class="clc-label mono">LinkedIn</span>
+                <span class="clc-value">linkedin.com/in/arko-saha</span>
+              </div>
+              <span class="clc-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a href="https://github.com/arko-saha" class="contact-link-card" id="contact-github" target="_blank" rel="noopener">
+              <div class="clc-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="clc-body">
+                <span class="clc-label mono">GitHub</span>
+                <span class="clc-value">github.com/arko-saha</span>
+              </div>
+              <span class="clc-arrow" aria-hidden="true">↗</span>
+            </a>
+
+            <a href="CV_Arko_Saha.pdf" class="contact-link-card" id="contact-cv" target="_blank" rel="noopener">
+              <div class="clc-icon" aria-hidden="true">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="1.5"/>
+                  <polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="1.5"/>
+                  <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  <line x1="10" y1="9" x2="8" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div class="clc-body">
+                <span class="clc-label mono">Curriculum Vitae</span>
+                <span class="clc-value">Download PDF</span>
+              </div>
+              <span class="clc-arrow" aria-hidden="true">↓</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════ FOOTER ══════════════════════════════ -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p class="mono footer-copy">© 2025 Arko Saha · <a href="blog.html">Blog</a> · London, UK</p>
+      <p class="mono footer-right">Open to opportunities · <a href="mailto:arkosaha.ruet@gmail.com" style="color:var(--forest)">arkosaha.ruet@gmail.com</a></p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
