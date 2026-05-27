@@ -59,6 +59,22 @@
         "blogPost": [
           {
             "@type": "BlogPosting",
+            "headline": "NeuroScan AI: Deep Learning for Brain Tumour Classification from MRI Scans",
+            "description": "A full-stack medical imaging system that fine-tunes a VGG-16 convolutional network on thousands of MRI scans to classify brain tumours into four clinically distinct categories — with a production Flask API and dark-mode diagnostic dashboard.",
+            "author": { "@id": "https://arkosaha.dev/#person" },
+            "datePublished": "2026-05-24",
+            "keywords": ["Deep Learning","VGG-16","Clinical AI","TensorFlow","Flask","Medical Imaging"]
+          },
+          {
+            "@type": "BlogPosting",
+            "headline": "MLOps Asset Valuation Engine: From Jupyter Notebook to Production-Grade Financial Tool",
+            "description": "A deep-dive into building a modular, testable, and deployable natural gas contract valuation system — combining ARIMA-based price forecasting, P&L modelling, and an interactive Streamlit dashboard.",
+            "author": { "@id": "https://arkosaha.dev/#person" },
+            "datePublished": "2026-05-10",
+            "keywords": ["MLOps","quantitative finance","time series","Python","Streamlit","ARIMA","forecasting"]
+          },
+          {
+            "@type": "BlogPosting",
             "headline": "Building a Federated Learning System for ICU Sepsis Prediction: Lessons from MIMIC-III",
             "description": "How I designed a safe offline reinforcement learning architecture for personalised sepsis care using federated learning on MIMIC-III clinical data.",
             "author": { "@id": "https://arkosaha.dev/#person" },
@@ -75,11 +91,11 @@
           },
           {
             "@type": "BlogPosting",
-            "headline": "From 400,000 Cricket Deliveries to a Data Warehouse: My ETL Architecture",
-            "description": "How I designed an ETL pipeline processing 400k+ ball-by-ball cricket records into a star schema data warehouse for predictive analytics.",
+            "headline": "Beyond Instinct: Data-Driven T20 Cricket Projections",
+            "description": "How I built a full T20 cricket analytics framework for my MSc dissertation — novel KPIs, a deep neural network trained on 400k deliveries, and an interactive Tableau dashboard for coaches and scouts.",
             "author": { "@id": "https://arkosaha.dev/#person" },
-            "datePublished": "2026-02-10",
-            "keywords": ["data engineering","ETL","data warehouse","star schema","Apache Airflow","sports analytics","cricket"]
+            "datePublished": "2023-09-15",
+            "keywords": ["sports analytics","cricket","machine learning","deep learning","Tableau","Python"]
           }
         ]
       }
@@ -170,7 +186,65 @@
           <div class="blog-posts">
 
             <!-- Post 1 -->
-            <article class="blog-card reveal-up" data-topics="clinical ml mlops" style="animation-delay:.05s">
+            <article class="blog-card reveal-up" data-topics="ml clinical" style="animation-delay:.05s">
+              <div class="blog-card-body">
+                <div class="blog-card-meta">
+                  <span class="blog-tag">Deep Learning</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Medical Imaging</span>
+                  <span class="blog-date mono">24 May 2026</span>
+                  <span class="blog-read-time mono">· 14 min read</span>
+                </div>
+                <h2 class="blog-card-title">
+                  <a href="post-brain-tumour-detection.html">
+                    NeuroScan AI: Deep Learning for Brain Tumour Classification from MRI Scans
+                  </a>
+                </h2>
+                <p class="blog-card-excerpt">
+                  A full-stack medical imaging system that fine-tunes a VGG-16 convolutional network on thousands of MRI scans to classify brain tumours into four clinically distinct categories — served via a production Flask API and dark-mode diagnostic dashboard.
+                </p>
+                <div class="blog-card-footer">
+                  <div class="blog-card-author">
+                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
+                    <span class="blog-author-name">Arko Saha</span>
+                  </div>
+                  <a href="post-brain-tumour-detection.html" class="blog-read-link" aria-label="Read full article on brain tumour detection">
+                    Read article →
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 2 -->
+            <article class="blog-card reveal-up" data-topics="mlops finance ml" style="animation-delay:.1s">
+              <div class="blog-card-body">
+                <div class="blog-card-meta">
+                  <span class="blog-tag">MLOps</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Quant Finance</span>
+                  <span class="blog-date mono">10 May 2026</span>
+                  <span class="blog-read-time mono">· 12 min read</span>
+                </div>
+                <h2 class="blog-card-title">
+                  <a href="post-asset-valuation.html">
+                    MLOps Asset Valuation Engine: From Jupyter Notebook to Production-Grade Financial Tool
+                  </a>
+                </h2>
+                <p class="blog-card-excerpt">
+                  A deep-dive into building a modular, testable, and deployable natural gas contract valuation system — combining ARIMA-based price forecasting, P&amp;L modelling, and an interactive Streamlit dashboard. We'll go from research notebooks to a structured Python package.
+                </p>
+                <div class="blog-card-footer">
+                  <div class="blog-card-author">
+                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
+                    <span class="blog-author-name">Arko Saha</span>
+                  </div>
+                  <a href="post-asset-valuation.html" class="blog-read-link" aria-label="Read full article on asset valuation engine">
+                    Read article →
+                  </a>
+                </div>
+              </div>
+            </article>
+
+            <!-- Post 3 -->
+            <article class="blog-card reveal-up" data-topics="clinical ml mlops" style="animation-delay:.15s">
               <div class="blog-card-body">
                 <div class="blog-card-meta">
                   <span class="blog-tag">Clinical AI</span>
@@ -198,8 +272,8 @@
               </div>
             </article>
 
-            <!-- Post 2 -->
-            <article class="blog-card reveal-up" data-topics="finance ml" style="animation-delay:.1s">
+            <!-- Post 4 -->
+            <article class="blog-card reveal-up" data-topics="finance ml" style="animation-delay:.2s">
               <div class="blog-card-body">
                 <div class="blog-card-meta">
                   <span class="blog-tag">Quant Finance</span>
@@ -227,37 +301,37 @@
               </div>
             </article>
 
-            <!-- Post 3 -->
-            <article class="blog-card reveal-up" data-topics="engineering mlops" style="animation-delay:.15s">
+            <!-- Post 5 -->
+            <article class="blog-card reveal-up" data-topics="ml engineering" style="animation-delay:.25s">
               <div class="blog-card-body">
                 <div class="blog-card-meta">
-                  <span class="blog-tag">Data Engineering</span>
-                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">ETL</span>
-                  <span class="blog-date mono">10 Feb 2026</span>
-                  <span class="blog-read-time mono">· 10 min read</span>
+                  <span class="blog-tag">Sports Analytics</span>
+                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Deep Learning</span>
+                  <span class="blog-date mono">15 Sep 2023</span>
+                  <span class="blog-read-time mono">· 12 min read</span>
                 </div>
                 <h2 class="blog-card-title">
-                  <a href="post-cricket-etl.html">
-                    From 400,000 Cricket Deliveries to a Data Warehouse: My ETL Architecture
+                  <a href="post-cricket-analytics.html">
+                    Beyond Instinct: Data-Driven T20 Cricket Projections
                   </a>
                 </h2>
                 <p class="blog-card-excerpt">
-                  When I started my MSc dissertation, I wanted to build something real — not a toy dataset. I ended up ingesting over <strong>400,000 ball-by-ball cricket records</strong> from ESPN Cricinfo and Cricsheet into a Snowflake-schema data warehouse. This post covers the ETL design: how I structured fact tables by player, position, and match dimensions, and the lessons I learned about data quality when your source is a website built by cricket fans, not data engineers.
+                  Cricket analytics lags a decade behind baseball. For my MSc dissertation at the University of Roehampton, I built a comprehensive quantitative framework to close this gap — novel KPIs adapted from Sabermetrics, a 5-layer deep neural network trained on 400k+ deliveries, and an interactive Tableau dashboard built for tactical support.
                 </p>
                 <div class="blog-card-footer">
                   <div class="blog-card-author">
                     <div class="blog-author-avatar" aria-hidden="true">AS</div>
                     <span class="blog-author-name">Arko Saha</span>
                   </div>
-                  <a href="post-cricket-etl.html" class="blog-read-link" aria-label="Read full article on Cricket ETL">
+                  <a href="post-cricket-analytics.html" class="blog-read-link" aria-label="Read full article on Cricket Projections">
                     Read article →
                   </a>
                 </div>
               </div>
             </article>
 
-            <!-- Post 4 -->
-            <article class="blog-card reveal-up" data-topics="mlops engineering" style="animation-delay:.2s">
+            <!-- Post 6 -->
+            <article class="blog-card reveal-up" data-topics="mlops engineering" style="animation-delay:.3s">
               <div class="blog-card-body">
                 <div class="blog-card-meta">
                   <span class="blog-tag">MLOps</span>
@@ -284,65 +358,7 @@
                 </div>
               </div>
             </article>
-
-            <!-- Post 5 -->
-            <article class="blog-card reveal-up" data-topics="ml clinical" style="animation-delay:.25s">
-              <div class="blog-card-body">
-                <div class="blog-card-meta">
-                  <span class="blog-tag">Clinical AI</span>
-                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Gradient Boosting</span>
-                  <span class="blog-date mono">18 Dec 2025</span>
-                  <span class="blog-read-time mono">· 8 min read</span>
-                </div>
-                <h2 class="blog-card-title">
-                  <a href="post-glycemic-prediction.html">
-                    Predicting Postprandial Glycemic Response in Gestational Diabetes with CGM Data
-                  </a>
-                </h2>
-                <p class="blog-card-excerpt">
-                  This article accompanies my co-authored publication in <em>Data Modeling</em> (2026). We trained <strong>gradient boosting models</strong> on continuous glucose monitoring (CGM) data to predict postprandial glycemic response in gestational diabetes patients — 90 minutes before a meal spike occurs. Early prediction enables clinical intervention windows that weren't previously possible with manual monitoring. Here's the feature engineering pipeline and model design.
-                </p>
-                <div class="blog-card-footer">
-                  <div class="blog-card-author">
-                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
-                    <span class="blog-author-name">Arko Saha</span>
-                  </div>
-                  <a href="post-glycemic-prediction.html" class="blog-read-link" aria-label="Read full article on glycemic prediction">
-                    Read article →
-                  </a>
-                </div>
-              </div>
-            </article>
-
-            <!-- Post 6 -->
-            <article class="blog-card reveal-up" data-topics="ml engineering" style="animation-delay:.3s">
-              <div class="blog-card-body">
-                <div class="blog-card-meta">
-                  <span class="blog-tag">Power BI</span>
-                  <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">BI & Analytics</span>
-                  <span class="blog-date mono">02 Nov 2025</span>
-                  <span class="blog-read-time mono">· 6 min read</span>
-                </div>
-                <h2 class="blog-card-title">
-                  <a href="post-power-bi-dax.html">
-                    Advanced DAX Patterns That Actually Matter for Executive Dashboards
-                  </a>
-                </h2>
-                <p class="blog-card-excerpt">
-                  After delivering Power BI dashboards for startups and enterprise clients alike — including a deployment that drove a <strong>15% operational efficiency gain</strong> — I've developed a strong view on which DAX patterns actually matter and which ones are cargo cult complexity. This post covers time-intelligence measures, calculation groups, and the single pattern that makes executive dashboards feel instant.
-                </p>
-                <div class="blog-card-footer">
-                  <div class="blog-card-author">
-                    <div class="blog-author-avatar" aria-hidden="true">AS</div>
-                    <span class="blog-author-name">Arko Saha</span>
-                  </div>
-                  <a href="post-power-bi-dax.html" class="blog-read-link" aria-label="Read full article on DAX patterns">
-                    Read article →
-                  </a>
-                </div>
-              </div>
-            </article>
-
+            
           </div><!-- /blog-posts -->
         </section><!-- /posts -->
 

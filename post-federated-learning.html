@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Federated Learning for ICU Sepsis Prediction on MIMIC-III — Arko Saha</title>
+<meta name="description" content="How I designed a safe offline reinforcement learning system with federated learning, hierarchical architectures, and DP-SGD on MIMIC-III clinical data — without centralising patient records." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="post-style.css" />
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="grid-overlay" aria-hidden="true"></div>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Home"><span class="nav-logo-monogram">AS</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html#about" class="nav-link" data-index="01">About</a></li>
+      <li><a href="index.html#projects" class="nav-link" data-index="05">Projects</a></li>
+      <li><a href="index.html#contact" class="nav-link" data-index="07">Contact</a></li>
+      <li><a href="blog.html" class="nav-link" data-index="08" style="color:var(--forest)">Blog</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-drawer" id="navDrawer" aria-hidden="true">
+  <ul role="list">
+    <li><a href="index.html#about" class="drawer-link">01 — About</a></li>
+    <li><a href="index.html#projects" class="drawer-link">05 — Projects</a></li>
+    <li><a href="index.html#contact" class="drawer-link">07 — Contact</a></li>
+    <li><a href="blog.html" class="drawer-link">08 — Blog</a></li>
+  </ul>
+</div>
+
+<main id="main-content">
+<header class="post-hero">
+  <div class="container">
+    <a href="blog.html" class="post-back">← Back to Blog</a>
+    <div class="post-tags-row">
+      <span class="blog-tag">Clinical AI</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Federated Learning</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Reinforcement Learning</span>
+    </div>
+    <h1 class="post-title">Building a Federated Learning System for ICU Sepsis Prediction:<em> Lessons from MIMIC-III</em></h1>
+    <p class="post-subtitle">Sepsis kills up to 20% of ICU patients globally, yet treatment protocols remain one-size-fits-all. I built a safe offline RL system with hierarchical and multimodal architectures — trained on MIMIC-III without ever centralising patient records.</p>
+    <div class="post-meta-bar">
+      <div class="post-meta-avatar" aria-hidden="true">AS</div>
+      <div>
+        <p class="post-meta-name">Arko Saha</p>
+        <p class="post-meta-detail">Founder &amp; CEO, FlameFactory · London</p>
+      </div>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">15 Apr 2026</span>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">12 min read</span>
+      <span class="post-meta-sep">·</span>
+      <a href="https://github.com/arko-saha/Clinical-Intelligence-MIMIC-III" target="_blank" rel="noopener" class="card-link mono" style="font-size:.75rem">GitHub ↗</a>
+    </div>
+  </div>
+</header>
+
+<div class="post-layout">
+  <article class="post-body" id="post-body">
+
+    <h2 id="problem">The Clinical AI Privacy Problem</h2>
+    <p>Clinical AI has a paradox at its centre. To build reliable models for rare but lethal conditions like sepsis, you need patient data from many hospitals — diverse populations, different treatment protocols, different equipment. But hospital data cannot be shared. HIPAA, GDPR, and institutional ethics boards all prohibit it, and rightly so. Patient records are among the most sensitive data that exists.</p>
+    <p>Federated learning is the principled solution to this paradox. Instead of centralising data, you distribute the model. Each hospital trains on its own local data and shares only the updated model parameters — never the underlying records. A central server aggregates these updates into a global model that benefits from all sites' learning without any patient ever leaving a hospital's firewall.</p>
+    <p>This project implements exactly that architecture, using the <strong>MIMIC-III</strong> clinical database as the ground truth dataset, and building two complementary pipelines that together form a comprehensive clinical intelligence platform — from interpretable supervised baselines through to privacy-preserving foundation models.</p>
+
+    <div class="callout info">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>
+      <div><strong>About MIMIC-III:</strong> The Medical Information Mart for Intensive Care III is a freely accessible critical care database from Beth Israel Deaconess Medical Center (2001–2012). It contains data from 60,000+ ICU patients across 26 related tables and 39 million timestamped events. Access requires PhysioNet credentialed registration.</div>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric-card"><span class="m-value">60k+</span><span class="m-label">ICU patients</span></div>
+      <div class="metric-card"><span class="m-value">39M</span><span class="m-label">Timestamped events</span></div>
+      <div class="metric-card"><span class="m-value">0.89+</span><span class="m-label">Foundation AUROC</span></div>
+      <div class="metric-card"><span class="m-value">ε=3.0</span><span class="m-label">Privacy budget</span></div>
+    </div>
+
+    <h2 id="architecture">Two-Pipeline Architecture</h2>
+    <p>The repository is structured as two independent pipelines that build on each other. Pipeline 1 establishes supervised baselines and validates the clinical hypotheses. Pipeline 2 takes those validated models into a privacy-preserving, federated context with continuous-time dynamics. Reading them in sequence is the clearest way to understand why each architectural decision was made.</p>
+
+    <h3>Pipeline 1: Integrated Clinical Assistant</h3>
+    <p>This is the foundational pipeline — a classic supervised ML approach that establishes baselines and validates data quality before introducing more complex architectures. It combines three distinct AI techniques into a single, cohesive clinical assistant that serves as the operational centrepiece of the project:</p>
+
+    <div class="data-table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Component</th>
+            <th>Core Technique</th>
+            <th>Inputs &amp; Data Sources</th>
+            <th>Clinical Rationale &amp; Target</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight: 600; color: var(--text-0);">01 — Sepsis Survival Prediction</td>
+            <td class="mono" style="color: var(--sienna);">Random Forest Classifier</td>
+            <td>Vital sign aggregates (HR, SpO₂), lab summaries (lactate, creatinine), unit type, and demographics.</td>
+            <td>Achieves baseline <strong>0.75+ AUC</strong>. Provides interpretable feature importance rankings vital for clinical trust.</td>
+          </tr>
+          <tr>
+            <td style="font-weight: 600; color: var(--text-0);">02 — Risk Factor Discovery</td>
+            <td class="mono" style="color: var(--sienna);">Graph Neural Network (GNN)</td>
+            <td>Patient comorbidity network built from <code>DIAGNOSES_ICD</code> (diagnoses as nodes, co-occurrence as edges).</td>
+            <td>Learns node embeddings that cluster comorbidity burdens, making complex structural risk factors highly visible.</td>
+          </tr>
+          <tr>
+            <td style="font-weight: 600; color: var(--text-0);">03 — Treatment Optimisation</td>
+            <td class="mono" style="color: var(--sienna);">Q-Learning (Offline RL)</td>
+            <td>Treatment-outcome tuples from <code>PROCEDURES_ICD</code> (discretised fluids, vasopressors, ventilation).</td>
+            <td>Converges over <strong>1,000+ episodes</strong> to recommend optimal treatment trajectories mapped to survival.</td>
+          </tr>
+          <tr class="highlight">
+            <td style="color: var(--forest);">04 — Integrated Assistant</td>
+            <td class="mono" style="color: var(--forest);"><code>MIMICClinicalAssistant</code></td>
+            <td style="color: var(--forest);">Unified interface wrapper accepting real-time patient physiological vector.</td>
+            <td style="color: var(--forest); font-weight: 600;">Outputs tri-component predictions: survival probability (ML), comorbidity risks (GNN), and suggested trajectory (RL).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Pipeline 2: Federated Foundation Architecture</h3>
+    <p>This is the research-grade pipeline. It addresses the core limitation of Pipeline 1: centralised training data. All of Pipeline 1's models require all patient records to be in one place. Pipeline 2 removes that requirement entirely — making the approach deployable across real hospital networks where data localisation is mandatory.</p>
+
+    <h2 id="gnn">GNN for Disease Co-occurrence</h2>
+    <p>The comorbidity graph is one of the most clinically interesting components of this project. Tabular analysis tells you what features correlate with sepsis mortality. Graph analysis tells you <em>which diseases co-occur with sepsis</em> at anomalous rates — revealing the structural disease burden of a critical care cohort.</p>
+    <p>Construction is straightforward: iterate the DIAGNOSES_ICD table, build an adjacency matrix where <code>A[i][j] = number of patients with both condition i and condition j</code>. Normalise by individual diagnosis prevalence to get a co-occurrence excess score. Apply a GNN with message-passing layers to learn embeddings that encode the local graph neighbourhood of each diagnosis — conditions with similar co-occurrence profiles cluster together in embedding space.</p>
+    <p>The resulting comorbidity heatmaps reveal clinically expected clusters (sepsis, acute kidney injury, multi-organ failure) but also surfaced less obvious associations worth further investigation — a validation that the graph approach can generate genuinely novel clinical hypotheses from historical data.</p>
+
+    <h2 id="continuous-dynamics">Continuous-Time Dynamics: ACSSM</h2>
+    <p>ICU data is inherently irregular. Vital signs are measured when a nurse checks them. Lab results arrive when the lab processes a sample. Standard RNNs and Transformers assume fixed-interval inputs — a fundamentally wrong assumption for clinical time-series data that will produce systematic prediction errors wherever measurement timing is driven by patient deterioration (which is exactly when you need the model most).</p>
+    <p>The Attentive Continuous State-Space Model (ACSSM) addresses this directly. Rather than treating patient observations as a discrete sequence, it models the patient's physiological state as a continuous latent trajectory governed by a learned ordinary differential equation. Between observations, the hidden state evolves according to this ODE. When a new observation arrives, the model updates its latent estimate using a learned attention mechanism that weights the new measurement against the predicted state.</p>
+
+    <div class="callout note">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+      <div>The ACSSM avoids the interpolation artifacts that plague naive approaches like linear imputation. It learns <em>how</em> physiological variables evolve between measurements — capturing the fact that heart rate recovers differently from blood pressure, which recovers differently from lactate. This dynamic is clinically meaningful: the <em>rate of change</em> of a vital sign is often more informative than its absolute value.</div>
+    </div>
+
+    <h2 id="temporal-attention">Temporal Attention Mechanisms</h2>
+    <p>Once the ACSSM has produced a continuous latent trajectory, the temporal attention module identifies which historical states are most relevant for the current prediction. The core insight is that different physiological variables decay in relevance at different rates — a heart rate reading from 2 minutes ago is still highly relevant; a lactate measurement from 6 hours ago is not. The module implements three decay functions that can be selected based on the clinical variable being modelled:</p>
+
+    <div class="data-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Decay Type</th><th>Formula</th><th>Best For</th><th>Clinical Rationale</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Exponential</td><td><code>exp(-λΔt)</code></td><td>Fast-changing vitals (HR, SpO₂)</td><td>Continuous monitoring; recent values dominate</td></tr>
+          <tr><td>Gaussian</td><td><code>exp(-Δt²/2σ²)</code></td><td>Lab values with known test intervals</td><td>Peaked relevance around expected re-measurement time</td></tr>
+          <tr><td>Power-law</td><td><code>(1+Δt)⁻ᵅ</code></td><td>Long-range dependencies (chronic markers)</td><td>Chronic conditions retain relevance over days</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The multi-scale design allows the model to simultaneously attend to short-term physiological crises (deteriorating lactate in the last 2 hours) and longer-term context (the patient's admission trajectory over 48 hours). This is architecturally analogous to multi-scale attention in NLP transformers, but grounded in the physiology of critical care rather than token co-occurrence statistics.</p>
+
+    <h2 id="federated">The Federated Learning Framework</h2>
+    <p>The federated setup simulates multiple hospital nodes, each training on a partitioned subset of MIMIC-III data, then aggregating updates via a central server. Privacy is enforced at two independent levels — model architecture and training algorithm — so that no single point of failure can expose patient data.</p>
+
+    <h3>Differential Privacy (DP-SGD)</h3>
+    <p>During local training, gradient noise is added at each update step before parameters are shared. The privacy budget ε bounds the maximum information about any single patient's record that can be inferred from the released model weights — even by an adversary with access to all other data. A tighter budget (smaller ε) provides stronger privacy guarantees but at the cost of model accuracy. The implementation uses the Opacus library, which integrates directly with PyTorch's optimiser loop:</p>
+
+    <div class="code-label">
+      <span>Federated_Foundation_Models/src/federated_foundation_models.ipynb</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">from</span> opacus <span class="kw">import</span> PrivacyEngine
+
+<span class="cm"># Attach DP-SGD to the local training loop</span>
+privacy_engine = <span class="fn">PrivacyEngine</span>()
+model, optimiser, train_loader = privacy_engine.<span class="fn">make_private_with_epsilon</span>(
+    module=local_foundation_model,
+    optimizer=optimiser,
+    data_loader=train_loader,
+    epochs=num_epochs,
+    target_epsilon=<span class="nb">3.0</span>,   <span class="cm"># privacy budget ε — lower = stronger privacy</span>
+    target_delta=<span class="nb">1e-5</span>,    <span class="cm"># probability of ε-violation (δ)</span>
+    max_grad_norm=<span class="nb">1.0</span>,    <span class="cm"># gradient clipping bound before noise addition</span>
+)
+
+<span class="cm"># Opacus automatically computes noise scale σ from (ε, δ, epochs)</span>
+<span class="cm"># and clips + perturbs each per-sample gradient in the batch</span></code></pre>
+
+    <h3>Secure Aggregation (FedAvg)</h3>
+    <p>Model updates from each simulated hospital are aggregated at the central server using weighted FedAvg — the canonical federated aggregation algorithm. The weight for each site is proportional to its number of local training samples, ensuring that larger hospitals contribute more to the global model while smaller sites still benefit from the collective knowledge. Crucially, the server never receives raw patient data — only the weight deltas from the local training step.</p>
+
+    <pre><code><span class="kw">def</span> <span class="fn">federated_average</span>(local_updates: list, sample_counts: list) -> dict:
+    <span class="cm">"""Weighted FedAvg: each hospital's contribution weighted by local dataset size."""</span>
+    total = <span class="fn">sum</span>(sample_counts)
+    global_weights = {}
+    <span class="kw">for</span> key <span class="kw">in</span> local_updates[<span class="nb">0</span>]:
+        global_weights[key] = <span class="fn">sum</span>(
+            update[key] * (count / total)
+            <span class="kw">for</span> update, count <span class="kw">in</span> <span class="fn">zip</span>(local_updates, sample_counts)
+        )
+    <span class="kw">return</span> global_weights
+
+<span class="cm"># Each round: local train → share Δweights → aggregate → broadcast global model</span>
+<span class="cm"># No patient data is transmitted at any step</span></code></pre>
+
+    <h2 id="results">Clinical Validation Results</h2>
+    <p>The foundation model is validated on early sepsis detection — one of the highest-stakes clinical prediction tasks, where every hour of earlier identification corresponds to measurably better patient outcomes. The jump from the Random Forest baseline to the federated foundation model represents a clinically significant improvement in discrimination:</p>
+
+    <div class="metric-row">
+      <div class="metric-card"><span class="m-value">0.89+</span><span class="m-label">Foundation AUROC</span></div>
+      <div class="metric-card"><span class="m-value">98.9%</span><span class="m-label">FL accuracy</span></div>
+      <div class="metric-card"><span class="m-value">0.75+</span><span class="m-label">Baseline RF AUC</span></div>
+      <div class="metric-card"><span class="m-value">~1,000</span><span class="m-label">RL convergence episodes</span></div>
+    </div>
+
+    <p>The jump from 0.75 (baseline Random Forest) to 0.89+ (federated foundation model) represents a clinically meaningful improvement. At a typical ICU volume of 500 admissions per month, a 14-point AUROC improvement translates to dozens of earlier sepsis identifications per month — giving clinicians a wider intervention window before organ failure becomes irreversible. It also substantially reduces false-positive burden, which is a critical operational metric for clinical alert systems.</p>
+
+    <div class="pull-quote">AUROC of 0.89+ on early sepsis detection, trained across simulated hospital nodes — <em>without any patient data ever leaving a hospital's local environment.</em></div>
+
+    <h2 id="data">The MIMIC-III Tables Used</h2>
+    <p>Six core tables drive the analysis. Working with MIMIC-III's raw CSVs is non-trivial: the data spans a decade of clinical records, uses ICD-9 codes (not ICD-10), and requires careful cohort selection to avoid data leakage from future events into training labels.</p>
+
+    <div class="data-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Table</th><th>Rows (approx)</th><th>Use in Pipeline</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>ADMISSIONS</code></td><td>58,976</td><td>Survival labelling, admission type features, cohort selection</td></tr>
+          <tr><td><code>PATIENTS</code></td><td>46,520</td><td>Age, gender — demographic features; deduplication key</td></tr>
+          <tr><td><code>ICUSTAYS</code></td><td>61,532</td><td>ICU duration, unit type (MICU, SICU, CCU, CSRU) features</td></tr>
+          <tr><td><code>DIAGNOSES_ICD</code></td><td>651,047</td><td>Sepsis cohort selection (ICD-9 codes 995.9x, 785.52), GNN node definitions</td></tr>
+          <tr><td><code>CHARTEVENTS</code></td><td>~330M</td><td>Vital signs time-series — primary ACSSM input; requires heavy filtering</td></tr>
+          <tr><td><code>PROCEDURES_ICD</code></td><td>240,095</td><td>Treatment history for RL state-action pairs and reward labelling</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The CHARTEVENTS table deserves special mention: at 330 million rows, it is the largest table by a significant margin and contains every nurse-charted vital sign measurement across the dataset. Working with it requires careful filtering by <code>ITEMID</code> (which maps to specific clinical variables), removal of erroneous values (physiologically impossible measurements exist), and intelligent imputation for periods of missing data — handled by the ACSSM's continuous-dynamics model rather than naive forward-fill.</p>
+
+    <h2 id="ethical">Ethical Considerations &amp; Deployment Realities</h2>
+    <p>This project is educational and research-grade — and being explicit about what that means matters, particularly for clinical AI work. The gap between a compelling research prototype and a deployable clinical tool is wide, and almost none of it is a technical problem.</p>
+
+    <div class="callout warn">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+      <div>
+        <strong>For research use only.</strong> Real clinical AI deployment requires: (1) prospective validation in the target population (MIMIC-III is from 2001–2012; clinical practice has shifted), (2) IRB/ethics approval, (3) bias auditing across demographic subgroups (age, ethnicity, sex), (4) regulatory approval (MHRA/FDA class IIb medical device pathway for clinical decision support), and (5) continuous monitoring post-deployment with defined drift thresholds. The RL reward functions here are educational simplifications — real clinical RL requires expert clinician involvement in reward design to avoid optimising for metrics that diverge from patient welfare.
+      </div>
+    </div>
+
+    <h2 id="setup">Getting Started</h2>
+
+    <div class="code-label">
+      <span>Terminal</span>
+      <span style="color:#EF9F27">Shell</span>
+    </div>
+    <pre><code>git clone https://github.com/arko-saha/Clinical-Intelligence-MIMIC-III.git
+cd Clinical-Intelligence-MIMIC-III
+
+python -m venv venv &amp;&amp; source venv/bin/activate  <span class="cm"># On Windows: venv\Scripts\activate</span>
+pip install -r requirements.txt
+
+<span class="cm"># Obtain MIMIC-III access via PhysioNet (credentialed registration required)</span>
+<span class="cm"># Place CSV files in data/ directory matching the structure above</span>
+
+jupyter notebook  <span class="cm"># Run main.ipynb (Pipeline 1) or federated_foundation_models.ipynb (Pipeline 2)</span></code></pre>
+
+  </article>
+
+
+  <aside class="post-sidebar">
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Table of Contents</p>
+      <nav aria-label="Article sections">
+        <ul class="toc-nav">
+          <li><a href="#problem">The privacy problem</a></li>
+          <li><a href="#architecture">Two-pipeline architecture</a></li>
+          <li><a href="#continuous-dynamics">ACSSM continuous dynamics</a></li>
+          <li><a href="#temporal-attention">Temporal attention</a></li>
+          <li><a href="#federated">Federated learning</a></li>
+          <li><a href="#results">Clinical validation</a></li>
+          <li><a href="#data">MIMIC-III tables</a></li>
+          <li><a href="#ethical">Ethical considerations</a></li>
+          <li><a href="#setup">Getting started</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Project Links</p>
+      <div style="display:flex;flex-direction:column;gap:.6rem;">
+        <a href="https://github.com/arko-saha/Clinical-Intelligence-MIMIC-III" target="_blank" rel="noopener" class="card-link mono">GitHub repo ↗</a>
+        <a href="https://physionet.org/content/mimiciii/1.4/" target="_blank" rel="noopener" class="card-link mono">MIMIC-III on PhysioNet ↗</a>
+        <a href="index.html#projects" class="card-link mono">All projects ↗</a>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Tags</p>
+      <div class="skills-cloud" style="margin-top:.5rem">
+        <span class="skill-tag">Federated Learning</span>
+        <span class="skill-tag">RL</span>
+        <span class="skill-tag">MIMIC-III</span>
+        <span class="skill-tag">PyTorch</span>
+        <span class="skill-tag">Clinical AI</span>
+        <span class="skill-tag">GNN</span>
+        <span class="skill-tag">DP-SGD</span>
+      </div>
+    </div>
+    <div class="recruiter-cta" style="margin-top:1.25rem">
+      <p class="recruiter-cta-title">FlameFactory</p>
+      <p class="recruiter-cta-sub">Founder &amp; CEO building AI-first products at FlameFactory. Open to strategic partnerships and investment conversations.</p>
+      <a href="mailto:arkosaha.ruet@gmail.com" class="btn">Get in Touch ↗</a>
+    </div>
+  </aside>
+</div>
+
+<div class="container">
+  <div class="post-footer">
+    <p class="post-footer-label">Continue reading</p>
+    <div class="post-nav-grid">
+      <a href="post-cricket-analytics.html" class="post-nav-card">
+        <span class="pnc-dir">← Previous</span>
+        <span class="pnc-title">Beyond Instinct: Data-Driven T20 Cricket Projections</span>
+      </a>
+      <a href="post-fico-bucketing.html" class="post-nav-card">
+        <span class="pnc-dir">Next →</span>
+        <span class="pnc-title">Why Your FICO Bucketing Strategy Is Probably Suboptimal — and How to Fix It</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer class="footer" role="contentinfo">
+  <div class="container footer-inner">
+    <p class="mono footer-copy">© 2026 Arko Saha · <a href="index.html">Portfolio</a> · <a href="blog.html">Blog</a></p>
+    <p class="mono footer-right">London, UK · Founder &amp; CEO, FlameFactory</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script>
+const tocLinks = document.querySelectorAll('.toc-nav a');
+const headings = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+function updateToc() {
+  let active = '';
+  headings.forEach(h => { if (window.scrollY >= h.offsetTop - 120) active = h.id; });
+  tocLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + active); });
+}
+window.addEventListener('scroll', updateToc, { passive: true });
+updateToc();
+</script>
+</body>
+</html>

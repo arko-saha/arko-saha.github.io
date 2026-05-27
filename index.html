@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Arko Saha — Data Scientist & AI Engineer</title>
-  <meta name="description" content="Portfolio of Arko Saha — Data Scientist and AI Engineer specialising in Machine Learning, Deep Learning, Computer Vision, Quantitative Analysis, MLOps, Sports Analytics, and Clinical Data Analytics." />
+  <title>Arko Saha — ML Engineer &amp; Quantitative Researcher</title>
+  <meta name="description" content="Portfolio of Arko Saha — ML Engineer &amp; Quantitative Researcher, specialising in Machine Learning, Deep Learning, MLOps, Clinical Data, and Quantitative Finance." />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -68,7 +68,7 @@
         <!-- LEFT: text content -->
         <div class="hero-left">
           <div class="hero-label reveal-up" style="animation-delay:.1s">
-            <span class="mono label-tag">[ MSc Data Science · AI Engineer ]</span>
+            <span class="mono label-tag">[ ML Engineer &amp; Quantitative Researcher ]</span>
           </div>
 
           <h1 class="hero-name reveal-up" style="animation-delay:.25s">
@@ -76,8 +76,8 @@
           </h1>
 
           <p class="hero-tagline reveal-up" style="animation-delay:.4s">
-            Turning raw data into decisions &mdash; <br class="br-md"/>
-            from Predictive Analytics to Foundation Models.
+            Bridging Computer Vision, Clinical Safeguarding, and Advanced Analytics &mdash; <br class="br-md"/>
+            for the next generation of sports tech.
           </p>
 
           <div class="hero-cta reveal-up" style="animation-delay:.55s">
@@ -103,59 +103,27 @@
           </div>
         </div><!-- /hero-left -->
 
-        <!-- RIGHT: solarpunk orbital skill visualization -->
-        <div class="hero-visual reveal-up" style="animation-delay:.5s" aria-hidden="true">
-          <!-- Organic leaf decorations -->
-          <div class="hero-leaf hero-leaf-1"></div>
-          <div class="hero-leaf hero-leaf-2"></div>
-          <div class="hero-leaf hero-leaf-3"></div>
-
-          <div class="orbital-system">
-            <!-- Center -->
-            <div class="orbital-center">AS</div>
-
-            <!-- Ring 1: Core tools — green nodes -->
-            <div class="orbit-ring orbit-ring-1">
-              <!-- Node at 0deg (top) -->
-              <div class="orbit-node-wrap" style="transform:rotate(0deg)">
-                <div class="orbit-node" style="transform:translate(-23px,-103px) rotate(0deg)">SQL</div>
+        <!-- RIGHT: animated terminal -->
+        <div class="hero-visual reveal-up" style="animation-delay:.5s" aria-label="Profile summary terminal">
+          <div class="hero-terminal">
+            <div class="hero-terminal__bar" aria-hidden="true">
+              <span class="hero-terminal__dot hero-terminal__dot--red"></span>
+              <span class="hero-terminal__dot hero-terminal__dot--amber"></span>
+              <span class="hero-terminal__dot hero-terminal__dot--green"></span>
+              <span class="hero-terminal__title mono">arko_saha.json</span>
+            </div>
+            <div class="hero-terminal__body" id="terminalBody" aria-live="polite">
+              <div class="hero-terminal__line">
+                <span class="hero-terminal__prompt">$</span>
+                <span class="hero-terminal__cmd"> cat arko_saha.json</span>
               </div>
-              <!-- Node at 120deg -->
-              <div class="orbit-node-wrap" style="transform:rotate(120deg)">
-                <div class="orbit-node" style="transform:translate(-23px,-103px) rotate(-120deg)">Python</div>
-              </div>
-              <!-- Node at 240deg -->
-              <div class="orbit-node-wrap" style="transform:rotate(240deg)">
-                <div class="orbit-node" style="transform:translate(-23px,-103px) rotate(-240deg)">Airflow</div>
+              <pre class="hero-terminal__json" id="terminalJson"></pre>
+              <div class="hero-terminal__line hero-terminal__line--cursor" id="terminalCursorLine" style="display:none">
+                <span class="hero-terminal__prompt">$</span>
+                <span class="hero-terminal__cursor" aria-hidden="true"></span>
               </div>
             </div>
-
-            <!-- Ring 2: MLOps + BI — gold nodes -->
-            <div class="orbit-ring orbit-ring-2">
-              <div class="orbit-node-wrap" style="transform:rotate(60deg)">
-                <div class="orbit-node" style="transform:translate(-26px,-151px) rotate(-60deg)">MLOps</div>
-              </div>
-              <div class="orbit-node-wrap" style="transform:rotate(180deg)">
-                <div class="orbit-node" style="transform:translate(-26px,-151px) rotate(-180deg)">Power BI</div>
-              </div>
-              <div class="orbit-node-wrap" style="transform:rotate(300deg)">
-                <div class="orbit-node" style="transform:translate(-26px,-151px) rotate(-300deg)">Docker</div>
-              </div>
-            </div>
-
-            <!-- Ring 3: Specialisms — sienna nodes -->
-            <div class="orbit-ring orbit-ring-3">
-              <div class="orbit-node-wrap" style="transform:rotate(30deg)">
-                <div class="orbit-node" style="transform:translate(-28px,-193px) rotate(-30deg)">Clinical AI</div>
-              </div>
-              <div class="orbit-node-wrap" style="transform:rotate(150deg)">
-                <div class="orbit-node" style="transform:translate(-28px,-193px) rotate(-150deg)">LLMs</div>
-              </div>
-              <div class="orbit-node-wrap" style="transform:rotate(270deg)">
-                <div class="orbit-node" style="transform:translate(-28px,-193px) rotate(-270deg)">EHR</div>
-              </div>
-            </div>
-          </div><!-- /orbital-system -->
+          </div>
         </div><!-- /hero-visual -->
 
       </div><!-- /hero-content -->
@@ -178,30 +146,24 @@
         <div class="about-grid">
           <div class="about-text">
             <p class="about-lead reveal-up">
-              I'm a <strong>Data Scientist and AI Engineer</strong> based in London, UK — 
-              with an MSc in Data Science from the University of Roehampton and 
-              a background spanning mechatronics, clinical informatics, and full-stack ML systems.
+              My journey into data engineering and machine learning didn’t start with pristine datasets—it began on the factory floor and in the clinical back-office.
             </p>
             <p class="reveal-up" style="animation-delay:.1s">
-              My work sits at the intersection of <em>rigorous engineering</em> and 
-              <em>applied research</em>: I build predictive systems, ETL pipelines, and 
-              intelligent dashboards for problems that matter — from sepsis forecasting 
-              with federated learning to FICO-grade credit risk bucketing.
+              With a foundational background in Mechatronics Engineering, my early career was spent extracting signal from physical noise. I built industrial computer vision systems and managed complex sensor kinematics to automate manufacturing workflows. Today, I apply that same rigorous, systems-level thinking to the digital world: architecting the scalable data pipelines and machine learning infrastructure that power intelligent, real-world applications.
             </p>
             <p class="reveal-up" style="animation-delay:.2s">
-              When I'm not wrangling data, I contribute to open-source ML toolkits 
-              and explore the frontiers of foundation models applied to electronic health records.
+              <strong>I don't just train models; I build the ecosystems that sustain them.</strong><br/>
+              Whether I am orchestrating containerized ETL pipelines with Apache Airflow, designing dimensional data warehouses in PostgreSQL, or deploying predictive time-series models for asset valuation, I treat data engineering as the foundational lifeblood of Applied AI. I specialize in bridging the gap between raw, multi-source data and production-ready MLOps architectures.
             </p>
 
             <div class="about-badges reveal-up" style="animation-delay:.3s">
-              <span class="badge">Machine Learning</span>
-              <span class="badge">Deep Learning</span>
-              <span class="badge">MLOps</span>
-              <span class="badge">EHR Analytics</span>
-              <span class="badge">LLMs</span>
-              <span class="badge">Reinforcement Learning</span>
-              <span class="badge">Time-Series</span>
-              <span class="badge">RAG</span>
+              <span class="badge">SportsTech</span>
+              <span class="badge">Safeguarding</span>
+              <span class="badge">Computer Vision</span>
+              <span class="badge">Clinical Data</span>
+              <span class="badge">Cricket Analytics</span>
+              <span class="badge">Mechatronics</span>
+              <span class="badge">Industrial Automation</span>
             </div>
           </div>
 
@@ -233,6 +195,36 @@
               <a href="https://github.com/arko-saha" class="card-link mono" target="_blank" rel="noopener" aria-label="GitHub profile">github ↗</a>
             </div>
           </div>
+        </div>
+
+        <h3 class="subsection-title mono about-pillars-title reveal-up" style="animation-delay:.1s">// Core Capabilities</h3>
+        <div class="about-pillars-grid">
+          <div class="about-pillar-card reveal-up" style="animation-delay:.15s">
+            <div class="pillar-card-icon" aria-hidden="true">DE</div>
+            <h4 class="pillar-card-title">Data Engineering &amp; Architecture</h4>
+            <p class="pillar-card-desc">I design highly scalable ETL/ELT pipelines, dimensional data models (PostgreSQL/SQL), and automated orchestration layers (Apache Airflow) that turn fragmented data into single sources of truth.</p>
+          </div>
+          <div class="about-pillar-card reveal-up" style="animation-delay:.2s">
+            <div class="pillar-card-icon" aria-hidden="true">ML</div>
+            <h4 class="pillar-card-title">Applied Machine Learning &amp; MLOps</h4>
+            <p class="pillar-card-desc">I transition AI from Jupyter notebooks into production. From Deep Learning ensembles for MRI tumor detection to predictive time-series algorithms for forecasting, I build resilient, containerized ML pipelines.</p>
+          </div>
+          <div class="about-pillar-card reveal-up" style="animation-delay:.25s">
+            <div class="pillar-card-icon" aria-hidden="true">CV</div>
+            <h4 class="pillar-card-title">Computer Vision &amp; Edge AI</h4>
+            <p class="pillar-card-desc">Leveraging frameworks like TensorFlow, OpenCV, and MediaPipe, I build vision inspection systems and 3D pose estimation engines that solve physical-world problems.</p>
+          </div>
+        </div>
+
+        <div class="disciplinary-advantage reveal-up" style="animation-delay:.2s">
+          <h3 class="disciplinary-title">The Multi-Disciplinary Advantage</h3>
+          <p class="disciplinary-text">
+            I am uniquely shaped by my diverse background. Two years in clinical medical documentation instilled a ruthless adherence to data privacy and governance. Building industrial vision systems taught me optimization. Founding a SportsTech startup honed my ability to architect end-to-end full-stack data solutions from the ground up.
+          </p>
+          <p class="disciplinary-text" style="font-weight: 500;">
+            I combine the architectural vision of a founder with the hands-on execution of a senior engineer. I’m currently looking for roles where I can leverage my expertise in PySpark, Python, and MLOps to build scalable, data-driven system designs.
+          </p>
+          <div class="disciplinary-highlight">[ Target Roles: Data Engineer / Machine Learning Engineer ]</div>
         </div>
 
         <!-- Education timeline -->
@@ -275,102 +267,93 @@
           <div class="skill-category reveal-up" style="animation-delay:.05s">
             <h3 class="skill-cat-title">
               <span class="skill-cat-icon" aria-hidden="true">⬡</span>
-              Data Engineering & ETL
+              Artificial Intelligence & Computer Vision
             </h3>
             <div class="skill-tags">
-              <span class="skill-tag">Apache Airflow</span>
-              <span class="skill-tag">Data Warehousing</span>
-              <span class="skill-tag">ETL/ELT Pipelines</span>
-              <span class="skill-tag">Dimensional Modeling</span>
-              <span class="skill-tag">Star/Snowflake Schema</span>
-              <span class="skill-tag">Snowflake</span>
-              <span class="skill-tag">SQL Server</span>
-              <span class="skill-tag">PySpark</span>
-              <span class="skill-tag">MySQL</span>
+              <span class="skill-tag">TensorFlow / PyTorch</span>
+              <span class="skill-tag">Keras / Scikit-learn</span>
+              <span class="skill-tag">OpenCV / MediaPipe</span>
+              <span class="skill-tag">Object Detection</span>
+              <span class="skill-tag">Multi-Object Tracking</span>
+              <span class="skill-tag">Pose Estimation</span>
+              <span class="skill-tag">Instance Segmentation</span>
             </div>
           </div>
 
           <div class="skill-category reveal-up" style="animation-delay:.1s">
             <h3 class="skill-cat-title">
               <span class="skill-cat-icon" aria-hidden="true">⬡</span>
-              Model Development & Analytics
+              Applied AI & Modelling
             </h3>
             <div class="skill-tags">
-              <span class="skill-tag">Python</span>
-              <span class="skill-tag">NumPy</span>
-              <span class="skill-tag">Scikit-learn</span>
-              <span class="skill-tag">Pandas</span>
-              <span class="skill-tag">TensorFlow</span>
-              <span class="skill-tag">PyTorch</span>
-              <span class="skill-tag">Statistical Analysis</span>
-              <span class="skill-tag">EDA</span>
-              <span class="skill-tag">A/B Testing</span>
+              <span class="skill-tag">Predictive Modelling</span>
+              <span class="skill-tag">Model Quantization</span>
+              <span class="skill-tag">3D Kinematic Reconstruction</span>
+              <span class="skill-tag">Neural Network Architecture</span>
+              <span class="skill-tag">Time-Series</span>
+              <span class="skill-tag">RAG & LLMs</span>
             </div>
           </div>
 
           <div class="skill-category reveal-up" style="animation-delay:.15s">
             <h3 class="skill-cat-title">
               <span class="skill-cat-icon" aria-hidden="true">⬡</span>
-              MLOps & Infrastructure
+              Systems &amp; Software Tools
             </h3>
             <div class="skill-tags">
-              <span class="skill-tag">Docker</span>
-              <span class="skill-tag">Git</span>
-              <span class="skill-tag">Linux</span>
-              <span class="skill-tag">Flask</span>
-              <span class="skill-tag">GCP</span>
-              <span class="skill-tag">ML System Design</span>
-              <span class="skill-tag">Agile</span>
+              <span class="skill-tag">Python (Core / OOP)</span>
+              <span class="skill-tag">Flask (API Dev)</span>
+              <span class="skill-tag">Docker &amp; Compose</span>
+              <span class="skill-tag">Linux / Bash Scripting</span>
+              <span class="skill-tag">Git &amp; Version Control</span>
+              <span class="skill-tag">Markdown / LaTeX</span>
             </div>
           </div>
 
           <div class="skill-category reveal-up" style="animation-delay:.2s">
             <h3 class="skill-cat-title">
               <span class="skill-cat-icon" aria-hidden="true">⬡</span>
-              BI & Visualisation
+              BI &amp; Product Design
             </h3>
             <div class="skill-tags">
-              <span class="skill-tag">Power BI</span>
+              <span class="skill-tag">Power BI (DAX)</span>
               <span class="skill-tag">Tableau</span>
-              <span class="skill-tag">DAX</span>
               <span class="skill-tag">Advanced Excel</span>
-              <span class="skill-tag">Looker Studio</span>
-              <span class="skill-tag">Plotly / Seaborn</span>
-              <span class="skill-tag">Figma</span>
-              <span class="skill-tag">Streamlit</span>
+              <span class="skill-tag">Data Storytelling</span>
+              <span class="skill-tag">Figma (UI/UX)</span>
+              <span class="skill-tag">Adobe Creative Cloud</span>
             </div>
           </div>
 
           <div class="skill-category reveal-up" style="animation-delay:.25s">
             <h3 class="skill-cat-title">
               <span class="skill-cat-icon" aria-hidden="true">⬡</span>
-              Databases & Big Data
+              Data Engineering &amp; Databases
             </h3>
             <div class="skill-tags">
-              <span class="skill-tag">SQL</span>
-              <span class="skill-tag">PostgreSQL</span>
-              <span class="skill-tag">MongoDB</span>
-              <span class="skill-tag">NoSQL</span>
-              <span class="skill-tag">SQLite</span>
-              <span class="skill-tag">CTEs & Window Functions</span>
-              <span class="skill-tag">Stored Procedures</span>
+              <span class="skill-tag">Python (Pandas, NumPy)</span>
+              <span class="skill-tag">PostgreSQL / MySQL</span>
+              <span class="skill-tag">MongoDB / SQLite</span>
+              <span class="skill-tag">Data Warehousing</span>
+              <span class="skill-tag">ETL Processes</span>
+              <span class="skill-tag">Data Modelling</span>
             </div>
           </div>
 
           <div class="skill-category reveal-up" style="animation-delay:.3s">
             <h3 class="skill-cat-title">
               <span class="skill-cat-icon" aria-hidden="true">⬡</span>
-              Specialisations
+              Mechatronics &amp; Hard Engineering
             </h3>
             <div class="skill-tags">
-              <span class="skill-tag">LLMs</span>
-              <span class="skill-tag">RAG</span>
-              <span class="skill-tag">Foundation Models</span>
-              <span class="skill-tag">Reinforcement Learning</span>
-              <span class="skill-tag">EHR Analytics</span>
-              <span class="skill-tag">OMOP CDM</span>
-              <span class="skill-tag">Computer Vision</span>
-              <span class="skill-tag">Time-Series</span>
+              <span class="skill-tag">PLC Programming</span>
+              <span class="skill-tag">HMI/SCADA Systems</span>
+              <span class="skill-tag">Industrial Vision</span>
+              <span class="skill-tag">Instrumentation</span>
+              <span class="skill-tag">Industrial Pneumatic Systems</span>
+              <span class="skill-tag">Collaborative Robots</span>
+              <span class="skill-tag">Microcontrollers (IoT)</span>
+              <span class="skill-tag">Sensors &amp; MEMS</span>
             </div>
           </div>
         </div>
@@ -380,46 +363,39 @@
           <h3 class="subsection-title mono">// Core Proficiencies</h3>
           <div class="bars">
             <div class="bar-row">
-              <span class="bar-label mono">SQL &amp; Data Modelling</span>
-              <div class="bar-track" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" aria-label="SQL proficiency 95%">
-                <div class="bar-fill" data-width="95"></div>
+              <span class="bar-label mono">Machine Learning &amp; Python (PyTorch, Scikit-Learn, Time-Series)</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="94" aria-valuemin="0" aria-valuemax="100" aria-label="Machine Learning proficiency 94%">
+                <div class="bar-fill" data-width="94"></div>
               </div>
-              <span class="bar-pct mono">95%</span>
+              <span class="bar-pct mono">94%</span>
             </div>
             <div class="bar-row">
-              <span class="bar-label mono">Python (pandas, sklearn)</span>
-              <div class="bar-track" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="Python proficiency 92%">
+              <span class="bar-label mono">Computer Vision &amp; Image Processing (OpenCV, MediaPipe)</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100" aria-label="Computer Vision proficiency 92%">
                 <div class="bar-fill" data-width="92"></div>
               </div>
               <span class="bar-pct mono">92%</span>
             </div>
             <div class="bar-row">
-              <span class="bar-label mono">Power BI &amp; DAX</span>
-              <div class="bar-track" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100" aria-label="Power BI proficiency 88%">
+              <span class="bar-label mono">Data Engineering &amp; ETL (SQL, Postgres, Airflow, Warehousing)</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="88" aria-valuemin="0" aria-valuemax="100" aria-label="Data Engineering proficiency 88%">
                 <div class="bar-fill" data-width="88"></div>
               </div>
               <span class="bar-pct mono">88%</span>
             </div>
             <div class="bar-row">
-              <span class="bar-label mono">Apache Airflow / ETL</span>
-              <div class="bar-track" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="Apache Airflow proficiency 85%">
+              <span class="bar-label mono">Systems, MLOps &amp; Docker (Containers, Bash, API Dev)</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="Systems &amp; MLOps proficiency 85%">
                 <div class="bar-fill" data-width="85"></div>
               </div>
               <span class="bar-pct mono">85%</span>
             </div>
             <div class="bar-row">
-              <span class="bar-label mono">Docker &amp; Containerisation</span>
-              <div class="bar-track" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Docker proficiency 80%">
+              <span class="bar-label mono">Data Visualization &amp; Analytics (Looker, Power BI, Tableau)</span>
+              <div class="bar-track" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Data Analytics proficiency 80%">
                 <div class="bar-fill" data-width="80"></div>
               </div>
               <span class="bar-pct mono">80%</span>
-            </div>
-            <div class="bar-row">
-              <span class="bar-label mono">TensorFlow / PyTorch</span>
-              <div class="bar-track" role="progressbar" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100" aria-label="TensorFlow/PyTorch proficiency 78%">
-                <div class="bar-fill" data-width="78"></div>
-              </div>
-              <span class="bar-pct mono">78%</span>
             </div>
           </div>
         </div>
@@ -443,26 +419,45 @@
               <span class="exp-badge current">Current</span>
             </div>
             <div class="exp-body">
-              <h3 class="exp-role">Freelance Data Analyst</h3>
-              <p class="exp-org">Independent Contractor · Fiverr</p>
+              <h3 class="exp-role">Freelance Data Strategy Consultant</h3>
+              <p class="exp-org">Independent Contractor</p>
               <ul class="exp-bullets" role="list">
-                <li>Designed and deployed predictive ML models (scikit-learn, pandas) forecasting supply chain trends, yielding <strong>20% improvement</strong> in inventory accuracy</li>
-                <li>Architected automated ETL pipelines integrating multi-source data, reducing retrieval time by <strong>~60%</strong></li>
-                <li>Delivered production-ready analytics dashboards (SQL, Power BI, DAX) driving <strong>15% increase</strong> in operational efficiency</li>
-                <li>Built star and snowflake dimensional models for retail clients optimising query performance across sales and customer domains</li>
+                <li>Designed and deployed predictive ML models forecasting supply chain trends, yielding <strong>20% improvement</strong> in inventory accuracy.</li>
+                <li>Architected automated ETL pipelines integrating multi-source data, reducing retrieval time by <strong>~60%</strong>.</li>
+                <li>Built star and snowflake dimensional models for retail clients optimising query performance across domains.</li>
               </ul>
               <div class="exp-tags">
                 <span class="exp-tag">Python</span>
                 <span class="exp-tag">scikit-learn</span>
-                <span class="exp-tag">SQL</span>
-                <span class="exp-tag">Power BI</span>
-                <span class="exp-tag">DAX</span>
                 <span class="exp-tag">ETL</span>
+                <span class="exp-tag">Power BI</span>
               </div>
             </div>
           </article>
 
-          <article class="exp-item reveal-up" style="animation-delay:.1s">
+          <article class="exp-item reveal-up" style="animation-delay:.08s">
+            <div class="exp-meta">
+              <span class="exp-date mono">Oct 2018 — Mar 2024</span>
+              <span class="exp-badge">Full-Time</span>
+            </div>
+            <div class="exp-body">
+              <h3 class="exp-role">Team Lead, Sports Analytics</h3>
+              <p class="exp-org">Roar Media Bangladesh Limited</p>
+              <ul class="exp-bullets" role="list">
+                <li>Led a team of 30 analysts and writers by implementing data-driven content strategies and editorial workflows, growing monthly audience from <strong>0.8M to 2.4M readers</strong> over three years.</li>
+                <li>Designed Looker-based dashboards tracking content KPIs and audience engagement metrics, directly informing editorial decisions and improving content ROI by <strong>34%</strong>.</li>
+                <li>Scaled the sports analytics team to 14 by recruiting, onboarding, and mentoring analysts, maintaining output quality across 1,000+ published pieces.</li>
+              </ul>
+              <div class="exp-tags">
+                <span class="exp-tag">Looker</span>
+                <span class="exp-tag">Google Analytics</span>
+                <span class="exp-tag">Data Visualization</span>
+                <span class="exp-tag">Sports Analytics</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="exp-item reveal-up" style="animation-delay:.12s">
             <div class="exp-meta">
               <span class="exp-date mono">Sep 2023 — Nov 2023</span>
             </div>
@@ -470,35 +465,34 @@
               <h3 class="exp-role">Graduate Support Analyst Intern</h3>
               <p class="exp-org">University of Roehampton</p>
               <ul class="exp-bullets" role="list">
-                <li>Ran large-scale EDA and validation pipelines (Python, Power BI, DAX) raising data accuracy by <strong>30%</strong></li>
-                <li>Optimised data pipeline processing <strong>7,000+ student records</strong> daily, reducing processing time by <strong>15%</strong></li>
-                <li>Collaborated cross-functionally to streamline student record management and placement reporting</li>
+                <li>Ran large-scale EDA and validation pipelines raising data accuracy by <strong>30%</strong> for student records.</li>
+                <li>Optimised data pipeline processing <strong>7,000+ student records</strong> daily, reducing processing time by <strong>15%</strong>.</li>
               </ul>
               <div class="exp-tags">
-                <span class="exp-tag">Python</span>
-                <span class="exp-tag">Excel</span>
-                <span class="exp-tag">Power BI</span>
+                <span class="exp-tag">Data Pipeline</span>
                 <span class="exp-tag">EDA</span>
+                <span class="exp-tag">SQL</span>
               </div>
             </div>
           </article>
 
-          <article class="exp-item reveal-up" style="animation-delay:.15s">
+          <article class="exp-item reveal-up" style="animation-delay:.16s">
             <div class="exp-meta">
               <span class="exp-date mono">Aug 2020 — Aug 2022</span>
             </div>
             <div class="exp-body">
-              <h3 class="exp-role">Medical Documentation Specialist</h3>
-              <p class="exp-org">Augmedix Limited</p>
+              <h3 class="exp-role">Clinical Coder & Medical Documentation Specialist</h3>
+              <p class="exp-org">Augmedix BD</p>
               <ul class="exp-bullets" role="list">
-                <li>Assisted physicians documenting patient interactions in EHR systems during live care (EPIC, CERNER, eClinicalWorks) across Pediatrics, Gastroenterology, and Primary Care</li>
-                <li>Reviewed medical records for accuracy, conducted regulatory compliance audits, and collaborated with providers on patient history updates</li>
+                <li>Assisted US physicians by documenting patient interactions in EHR systems (EPIC, CERNER) during live care.</li>
+                <li>Ensured strict adherence to medical coding standards (ICD-10, CPT) and HIPAA compliance, conducting regulatory audits.</li>
+                <li>Provided critical Clinical Data Discipline, vital for establishing safeguarding protocols.</li>
               </ul>
               <div class="exp-tags">
-                <span class="exp-tag">EPIC</span>
-                <span class="exp-tag">CERNER</span>
-                <span class="exp-tag">EHR</span>
-                <span class="exp-tag">Healthcare</span>
+                <span class="exp-tag">Clinical Data</span>
+                <span class="exp-tag">EHR (EPIC/CERNER)</span>
+                <span class="exp-tag">Safeguarding</span>
+                <span class="exp-tag">ICD-10</span>
               </div>
             </div>
           </article>
@@ -511,14 +505,35 @@
               <h3 class="exp-role">Automation Support Engineer</h3>
               <p class="exp-org">Sincos Automation Technologies Limited</p>
               <ul class="exp-bullets" role="list">
-                <li>Deployed computer vision inspection systems reducing manufacturing defects by <strong>25%</strong> and increasing throughput by <strong>14%</strong></li>
-                <li>Automated daily operations via Power BI, VBA, and DAX, delivering a live KPI dashboard achieving a <strong>34% efficiency gain</strong></li>
+                <li>Deployed computer vision inspection systems reducing manufacturing defects by <strong>25%</strong> and increasing throughput by <strong>14%</strong>.</li>
+                <li>Automated daily operations via Power BI and VBA, delivering a live KPI dashboard achieving a <strong>34% efficiency gain</strong>.</li>
               </ul>
               <div class="exp-tags">
                 <span class="exp-tag">Computer Vision</span>
-                <span class="exp-tag">Power BI</span>
-                <span class="exp-tag">VBA</span>
+                <span class="exp-tag">Mechatronics</span>
                 <span class="exp-tag">Automation</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="exp-item reveal-up" style="animation-delay:.24s">
+            <div class="exp-meta">
+              <span class="exp-date mono">Apr 2017 — Sep 2018</span>
+              <span class="exp-badge">Contract</span>
+            </div>
+            <div class="exp-body">
+              <h3 class="exp-role">Sports Analyst</h3>
+              <p class="exp-org">Roar Media Bangladesh Limited (Indirect Contract)</p>
+              <ul class="exp-bullets" role="list">
+                <li>Produced 200+ in-depth sports articles, video scripts, and social media copy in the sports verticals, contributing to audience growth from zero to <strong>1M+ monthly readers</strong> over five years.</li>
+                <li>Conducted qualitative and quantitative research to underpin editorial analysis, translating complex match data and player statistics into accessible long-form narratives for a South Asian digital audience.</li>
+                <li>Scouted and mentored emerging sports writing talent, identifying candidates who later progressed into full analyst and editorial roles within the team.</li>
+              </ul>
+              <div class="exp-tags">
+                <span class="exp-tag">Quantitative Research</span>
+                <span class="exp-tag">Data Analysis</span>
+                <span class="exp-tag">Editorial Strategy</span>
+                <span class="exp-tag">Sports Writing</span>
               </div>
             </div>
           </article>
@@ -585,10 +600,15 @@
                   <span class="ptag">Credit Risk</span>
                   <span class="ptag">Optimization</span>
                 </div>
-                <a href="https://github.com/arko-saha/FICO-Score-Bucket" target="_blank" rel="noopener" class="btn-project" aria-label="View FICO-Quant on GitHub">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                  View on GitHub
-                </a>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; width:100%; justify-content:flex-end;">
+                  <a href="https://github.com/arko-saha/FICO-Score-Bucket" target="_blank" rel="noopener" class="btn-project" aria-label="View FICO-Quant on GitHub">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    GitHub ↗
+                  </a>
+                  <a href="post-fico-bucketing.html" class="btn-project" aria-label="Read FICO-Quant Article">
+                    Read Article →
+                  </a>
+                </div>
               </div>
             </div>
           </article>
@@ -615,10 +635,15 @@
                   <span class="ptag">PostgreSQL</span>
                   <span class="ptag">ETL</span>
                 </div>
-                <a href="https://github.com/arko-saha/Building-End-To-End-ETL-Pipeline-For-Weather-Monitoring-Using-AirFlow-And-Astro" target="_blank" rel="noopener" class="btn-project" aria-label="View Weather ETL on GitHub">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                  View on GitHub
-                </a>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; width:100%; justify-content:flex-end;">
+                  <a href="https://github.com/arko-saha/Building-End-To-End-ETL-Pipeline-For-Weather-Monitoring-Using-AirFlow-And-Astro" target="_blank" rel="noopener" class="btn-project" aria-label="View Weather ETL on GitHub">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    GitHub ↗
+                  </a>
+                  <a href="post-airflow-docker.html" class="btn-project" aria-label="Read Weather ETL Article">
+                    Read Article →
+                  </a>
+                </div>
               </div>
             </div>
           </article>
@@ -644,10 +669,15 @@
                   <span class="ptag">Python</span>
                   <span class="ptag">Time-Series</span>
                 </div>
-                <a href="https://github.com/arko-saha/Prototype-Pricing-Model" target="_blank" rel="noopener" class="btn-project" aria-label="View MLOps Asset Valuation on GitHub">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                  View on GitHub
-                </a>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; width:100%; justify-content:flex-end;">
+                  <a href="https://github.com/arko-saha/Prototype-Pricing-Model" target="_blank" rel="noopener" class="btn-project" aria-label="View MLOps Asset Valuation on GitHub">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    GitHub ↗
+                  </a>
+                  <a href="post-asset-valuation.html" class="btn-project" aria-label="Read MLOps Asset Valuation Article">
+                    Read Article →
+                  </a>
+                </div>
               </div>
             </div>
           </article>
@@ -673,10 +703,15 @@
                   <span class="ptag">ETL</span>
                   <span class="ptag">Data Warehousing</span>
                 </div>
-                <a href="https://github.com/arko-saha/Beyond-Instinct-Data-driven-Cricket-Projection" target="_blank" rel="noopener" class="btn-project" aria-label="View Cricket Analytics on GitHub">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                  View on GitHub
-                </a>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; width:100%; justify-content:flex-end;">
+                  <a href="https://github.com/arko-saha/Beyond-Instinct-Data-driven-Cricket-Projection" target="_blank" rel="noopener" class="btn-project" aria-label="View Cricket Analytics on GitHub">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    GitHub ↗
+                  </a>
+                  <a href="post-cricket-analytics.html" class="btn-project" aria-label="Read Cricket Analytics Article">
+                    Read Article →
+                  </a>
+                </div>
               </div>
             </div>
           </article>
@@ -706,10 +741,15 @@
                   <span class="ptag">RL</span>
                   <span class="ptag">MIMIC-III</span>
                 </div>
-                <a href="https://github.com/arko-saha/Clinical-Intelligence-MIMIC-III" target="_blank" rel="noopener" class="btn-project" aria-label="View Federated Foundation Models on GitHub">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                  View on GitHub
-                </a>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; width:100%; justify-content:flex-end;">
+                  <a href="https://github.com/arko-saha/Clinical-Intelligence-MIMIC-III" target="_blank" rel="noopener" class="btn-project" aria-label="View Federated Foundation Models on GitHub">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    GitHub ↗
+                  </a>
+                  <a href="post-federated-learning.html" class="btn-project" aria-label="Read Federated Foundation Models Article">
+                    Read Article →
+                  </a>
+                </div>
               </div>
             </div>
           </article>
@@ -736,10 +776,15 @@
                   <span class="ptag">Computer Vision</span>
                   <span class="ptag">Medical AI</span>
                 </div>
-                <a href="https://github.com/arko-saha/NeuroScan-AI" target="_blank" rel="noopener" class="btn-project" aria-label="View Brain Tumour Detection on GitHub">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-                  View on GitHub
-                </a>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; width:100%; justify-content:flex-end;">
+                  <a href="https://github.com/arko-saha/NeuroScan-AI" target="_blank" rel="noopener" class="btn-project" aria-label="View Brain Tumour Detection on GitHub">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                    GitHub ↗
+                  </a>
+                  <a href="post-brain-tumour-detection.html" class="btn-project" aria-label="Read Brain Tumour Detection Article">
+                    Read Article →
+                  </a>
+                </div>
               </div>
             </div>
           </article>

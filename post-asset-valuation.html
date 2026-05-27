@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MLOps Asset Valuation Engine: From Jupyter Notebook to Production — Arko Saha</title>
+<meta name="description" content="A deep-dive into building a modular, testable, and deployable natural gas contract valuation system — combining ARIMA forecasting, P&L modelling, and an interactive Streamlit dashboard." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="post-style.css" />
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="grid-overlay" aria-hidden="true"></div>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Home"><span class="nav-logo-monogram">AS</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html#about" class="nav-link" data-index="01">About</a></li>
+      <li><a href="index.html#projects" class="nav-link" data-index="05">Projects</a></li>
+      <li><a href="index.html#contact" class="nav-link" data-index="07">Contact</a></li>
+      <li><a href="blog.html" class="nav-link" data-index="08" style="color:var(--forest)">Blog</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-drawer" id="navDrawer" aria-hidden="true">
+  <ul role="list">
+    <li><a href="index.html#about" class="drawer-link">01 — About</a></li>
+    <li><a href="index.html#projects" class="drawer-link">05 — Projects</a></li>
+    <li><a href="index.html#contact" class="drawer-link">07 — Contact</a></li>
+    <li><a href="blog.html" class="drawer-link">08 — Blog</a></li>
+  </ul>
+</div>
+
+<main id="main-content">
+<header class="post-hero">
+  <div class="container">
+    <a href="blog.html" class="post-back">← Back to Blog</a>
+    <div class="post-tags-row">
+      <span class="blog-tag">MLOps</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Quant Finance</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Time Series</span>
+    </div>
+    <h1 class="post-title">MLOps Asset Valuation Engine:<em> Jupyter Notebook to Production</em></h1>
+    <p class="post-subtitle">A deep-dive into building a modular, testable, and deployable natural gas contract valuation system — combining ARIMA-based price forecasting, P&amp;L modelling, and an interactive Streamlit dashboard.</p>
+    <div class="post-meta-bar">
+      <div class="post-meta-avatar" aria-hidden="true">AS</div>
+      <div>
+        <p class="post-meta-name">Arko Saha</p>
+        <p class="post-meta-detail">Founder &amp; CEO, FlameFactory · London</p>
+      </div>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">10 May 2026</span>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">12 min read</span>
+      <span class="post-meta-sep">·</span>
+      <a href="https://github.com/arko-saha/Prototype-Pricing-Model" target="_blank" rel="noopener" class="card-link mono" style="font-size:.75rem">GitHub ↗</a>
+    </div>
+  </div>
+</header>
+
+<div class="post-layout">
+  <article class="post-body" id="post-body">
+
+    <div class="callout info">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+      <div>
+        <strong>Project Summary:</strong> This project transforms a prototype Jupyter notebook into a production-ready Python package for pricing natural gas storage contracts. It combines ARIMA forecasting, a structured valuation engine, a CLI, a Streamlit dashboard, and automated pytest coverage — demonstrating a full MLOps lifecycle from research to deployment.
+      </div>
+    </div>
+
+    <h2 id="problem">The Problem: Pricing a Natural Gas Storage Contract</h2>
+    <p>Natural gas markets are fundamentally seasonal. Producers inject gas into underground storage facilities during low-demand summer months, then sell — or <em>withdraw</em> — it during peak winter demand. The arbitrage opportunity between these two market states generates profit, but only if the trade can be modelled accurately.</p>
+    <p>A natural gas storage contract defines injection dates, withdrawal dates, volumetric limits, and a set of operational costs. The core question it poses is deceptively simple: <strong>given current and forecasted prices, is this contract profitable?</strong></p>
+    <p>Answering it requires integrating several layers of complexity: forward price curves, volume constraints, multi-month storage overhead, and variable per-unit fees. This project builds a clean, reusable tool to do exactly that.</p>
+
+    <div class="pull-quote">The goal was not just to compute a number — it was to build the kind of system that a quant desk or energy trading team could actually use.</div>
+
+    <h2 id="architecture">System Architecture</h2>
+    <p>The project follows a layered architecture that cleanly separates research artefacts from production code — a pattern central to MLOps best practice.</p>
+
+    <div class="code-label">
+      <span>Project Directory Structure</span>
+      <span style="color:#EF9F27">Structure</span>
+    </div>
+    <pre><code>Prototype-Pricing-Model/
+├── pricing_model/         # ← core Python package
+│   ├── __init__.py
+│   ├── forecaster.py      # ← ARIMA price prediction engine
+│   ├── contract_pricer.py # ← business logic &amp; P&amp;L calculation
+│   └── cli.py             # ← argparse command-line interface
+├── research/              # ← prototype notebooks (exploration)
+├── tests/                 # ← pytest unit &amp; integration tests
+├── app.py                 # ← Streamlit web dashboard
+├── Nat_Gas.csv            # ← historical price dataset
+└── requirements.txt       # ← pinned dependencies</code></pre>
+
+    <p>The key architectural decision here is the <strong>separation of the <code>pricing_model</code> package from <code>app.py</code></strong>. The Streamlit frontend is a consumer of the package — it does not contain any business logic. This means the same pricing engine can be invoked from the CLI, a REST API, a test suite, or the web UI with zero code duplication.</p>
+
+    <h2 id="arima">Module 1 — The ARIMA Price Forecaster</h2>
+    <p>The <code>NaturalGasForecaster</code> class ingests the <code>Nat_Gas.csv</code> dataset and fits an ARIMA(1,1,1) model on historical monthly prices. ARIMA is well-suited here because natural gas prices exhibit a combination of auto-correlation (prices this month are correlated with last month's) and non-stationarity (long-run trend), which the integrated differencing term <em>I(1)</em> corrects for.</p>
+
+    <h3>Why ARIMA(1,1,1)?</h3>
+    <ul>
+      <li><strong>AR(1)</strong> — AutoRegressive component of order 1 captures the momentum in prices: high prices this month increase the probability of high prices next month.</li>
+      <li><strong>I(1)</strong> — First-order differencing makes the series stationary, a prerequisite for ARIMA to produce valid forecasts.</li>
+      <li><strong>MA(1)</strong> — Moving Average component smooths out short-run shocks in the residuals.</li>
+    </ul>
+
+    <div class="code-label">
+      <span>pricing_model/forecaster.py</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">from</span> statsmodels.tsa.arima.model <span class="kw">import</span> ARIMA
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">class</span> <span class="fn">NaturalGasForecaster</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, csv_path: str):
+        <span class="var">self</span>.df = pd.<span class="fn">read_csv</span>(csv_path, parse_dates=[<span class="st">'Dates'</span>])
+        <span class="var">self</span>.df = <span class="var">self</span>.df.<span class="fn">sort_values</span>(<span class="st">'Dates'</span>).<span class="fn">set_index</span>(<span class="st">'Dates'</span>)
+        <span class="var">self</span>.model = <span class="fn">ARIMA</span>(<span class="var">self</span>.df[<span class="st">'Prices'</span>], order=(<span class="nb">1</span>, <span class="nb">1</span>, <span class="nb">1</span>))
+        <span class="var">self</span>.result = <span class="var">self</span>.model.<span class="fn">fit</span>()
+
+    <span class="kw">def</span> <span class="fn">predict</span>(<span class="var">self</span>, target_date) -> float:
+        <span class="cm"># If within historical range, return actual price</span>
+        <span class="kw">if</span> target_date <span class="kw">in</span> <span class="var">self</span>.df.index:
+            <span class="kw">return</span> <span class="var">self</span>.df.loc[target_date, <span class="st">'Prices'</span>]
+        <span class="cm"># Otherwise, forecast using fitted ARIMA</span>
+        steps = <span class="fn">len</span>(pd.<span class="fn">date_range</span>(<span class="var">self</span>.df.index[-<span class="nb">1</span>], target_date, freq=<span class="st">'MS'</span>))
+        forecast = <span class="var">self</span>.result.<span class="fn">forecast</span>(steps=steps)
+        <span class="kw">return</span> forecast.iloc[-<span class="nb">1</span>]
+
+    <span class="kw">def</span> <span class="fn">get_historical_data</span>(<span class="var">self</span>) -> pd.<span class="fn">DataFrame</span>:
+        <span class="kw">return</span> <span class="var">self</span>.df.<span class="fn">reset_index</span>()</code></pre>
+
+    <p>The <code>predict()</code> method elegantly handles both historical lookups and future forecasts with a single interface — callers do not need to know whether a date is in-sample or out-of-sample.</p>
+
+    <h2 id="valuation">Module 2 — The Contract Valuation Engine</h2>
+    <p>The <code>ContractPricer</code> class implements the core financial logic. It follows a standard Profit &amp; Loss methodology for commodity storage contracts:</p>
+
+    <div class="callout note">
+      <strong>Net P&amp;L Valuation Equation:</strong><br/>
+      <code>Contract Value = (Withdrawal Revenue − Withdrawal Fees) − (Injection Cost + Injection Fees) − Storage Costs − Transport Costs</code>
+    </div>
+
+    <h3>Step-by-Step Valuation Process</h3>
+    <ol class="steps">
+      <li>
+        <div><strong>Date Normalisation</strong> — All injection and withdrawal dates are converted to pandas <code>Timestamp</code> objects and sorted chronologically, ensuring temporal consistency throughout the calculation.</div>
+      </li>
+      <li>
+        <div><strong>Price Discovery</strong> — For each operation date, the forecaster is queried to retrieve either the historical market price or an ARIMA-projected future price.</div>
+      </li>
+      <li>
+        <div><strong>Injection Analysis</strong> — Volume injected on each date is capped by the daily injection rate and the remaining storage capacity. Injection cost = <code>(price × volume) + (fee × volume / 1e6)</code>.</div>
+      </li>
+      <li>
+        <div><strong>Storage Duration Overhead</strong> — Monthly storage fees accumulate over the duration between the first injection and the last withdrawal — a critical cost component often overlooked in naive models.</div>
+      </li>
+      <li>
+        <div><strong>Withdrawal Revenue</strong> — Revenue is capped by daily withdrawal limits and available inventory. Revenue = <code>(price × volume) − (fee × volume / 1e6)</code>.</div>
+      </li>
+      <li>
+        <div><strong>Net Valuation</strong> — All revenues are summed and all costs deducted. The final number is the fair value of the contract — a positive value indicates a profitable trade.</div>
+      </li>
+    </ol>
+
+    <div class="code-label">
+      <span>pricing_model/contract_pricer.py</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">def</span> <span class="fn">value_contract</span>(<span class="var">self</span>,
+    injection_dates, withdrawal_dates,
+    injection_rate, withdrawal_rate,
+    max_volume, storage_cost_per_month,
+    processing_fee, transport_cost) -> dict:
+
+    total_injection_cost  = <span class="nb">0.0</span>
+    total_withdrawal_rev  = <span class="nb">0.0</span>
+    current_inventory     = <span class="nb">0.0</span>
+
+    <span class="kw">for</span> date <span class="kw">in</span> injection_dates:
+        price   = <span class="var">self</span>.forecaster.<span class="fn">predict</span>(date)
+        volume  = <span class="fn">min</span>(injection_rate, max_volume - current_inventory)
+        cost    = (price * volume) + (processing_fee * volume / <span class="nb">1e6</span>)
+        total_injection_cost += cost
+        current_inventory    += volume
+
+    start  = <span class="fn">min</span>(injection_dates)
+    end    = <span class="fn">max</span>(withdrawal_dates)
+    months = (end.year - start.year) * <span class="nb">12</span> + (end.month - start.month)
+    storage_cost = storage_cost_per_month * months
+
+    <span class="kw">for</span> date <span class="kw">in</span> withdrawal_dates:
+        price    = <span class="var">self</span>.forecaster.<span class="fn">predict</span>(date)
+        volume   = <span class="fn">min</span>(withdrawal_rate, current_inventory)
+        revenue  = (price * volume) - (processing_fee * volume / <span class="nb">1e6</span>)
+        total_withdrawal_rev += revenue
+        current_inventory    -= volume
+
+    contract_value = (total_withdrawal_rev - total_injection_cost
+                     - storage_cost - <span class="nb">2</span> * transport_cost)
+
+    <span class="kw">return</span> {
+        <span class="st">'contract_value'</span>: contract_value,
+        <span class="st">'total_revenue'</span>:  total_withdrawal_rev,
+        <span class="st">'total_cost'</span>:     total_injection_cost + storage_cost + <span class="nb">2</span> * transport_cost
+    }</code></pre>
+
+    <p>Note the transport cost is multiplied by 2 — gas must be transported both <em>to</em> the storage facility and <em>from</em> it, representing a two-way logistics cost that is easy to omit in a naive implementation.</p>
+
+    <h2 id="streamlit">Module 3 — The Streamlit Dashboard</h2>
+    <p>The <code>app.py</code> file delivers the model through an interactive Streamlit web application. The dashboard is split into two main panels: a sidebar for parameter configuration, and a main content area for scheduling and visualisation.</p>
+
+    <h3>Key UI Features</h3>
+    <ul>
+      <li><strong>Parametric sidebar</strong> — all contract constraints (max volume, injection rate, fees, transport cost) are configurable via number inputs without touching the source code.</li>
+      <li><strong>Real-time P&amp;L calculation</strong> — clicking "Calculate Contract Value" triggers the full valuation pipeline and surfaces the result with profit/loss indicators and a warning for unprofitable contracts.</li>
+      <li><strong>ARIMA forecast chart</strong> — a Plotly time series chart overlays 12 months of ARIMA-projected prices on the historical data, giving traders a visual read on the forward curve before committing to a contract schedule.</li>
+      <li><strong>Resource caching</strong> — the <code>@st.cache_resource</code> decorator ensures the ARIMA model is only fitted once per session, preventing expensive re-computation on every UI interaction.</li>
+    </ul>
+
+    <div class="code-label">
+      <span>Terminal</span>
+      <span style="color:#EF9F27">Shell</span>
+    </div>
+    <pre><code><span class="cm"># Run the Streamlit dashboard locally</span>
+streamlit run app.py
+
+<span class="cm"># Or with a custom data source</span>
+streamlit run app.py -- --data-path /path/to/prices.csv</code></pre>
+
+    <div class="code-label">
+      <span>app.py — caching and visualization snippet</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="cm"># Cache the model: fit once, reuse across all interactions</span>
+<span class="op">@</span>st.<span class="fn">cache_resource</span>
+<span class="kw">def</span> <span class="fn">get_backend</span>(path):
+    forecaster = <span class="fn">NaturalGasForecaster</span>(path)
+    pricer     = <span class="fn">ContractPricer</span>(forecaster)
+    <span class="kw">return</span> forecaster, pricer
+
+<span class="cm"># Append 12-month ARIMA forecast to the historical series</span>
+last_date    = hist_df[<span class="st">'Dates'</span>].<span class="fn">max</span>()
+future_dates = [last_date + timedelta(days=<span class="nb">30</span>*i) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, <span class="nb">13</span>)]
+future_prices = [forecaster.<span class="fn">predict</span>(d) <span class="kw">for</span> d <span class="kw">in</span> future_dates]
+
+<span class="cm"># Combined historical + forecast dataframe for Plotly</span>
+viz_df = pd.<span class="fn">concat</span>([hist_df, forecast_df])</code></pre>
+
+    <h2 id="cli">Module 4 — Command-Line Interface</h2>
+    <p>For automated workflows, scheduled jobs, or scripting integration, the project exposes a <code>cli.py</code> module that wraps the pricing engine behind an <code>argparse</code> interface.</p>
+
+    <div class="code-label">
+      <span>Terminal — CLI pricing usage</span>
+      <span style="color:#EF9F27">Shell</span>
+    </div>
+    <pre><code><span class="cm"># Price a contract directly from the terminal</span>
+python -m pricing_model.cli \
+  --injection-dates <span class="st">2020-10-31</span> <span class="st">2021-02-28</span> \
+  --withdrawal-dates <span class="st">2024-09-30</span> <span class="st">2024-02-29</span> \
+  --max-volume <span class="nb">2000000</span> \
+  --storage-cost <span class="nb">100000</span> \
+  --transport <span class="nb">50000</span>
+
+<span class="cm"># Sample output:</span>
+<span class="cm"># Contract Value: $1,247,832.50</span>
+<span class="cm"># Total Revenue:  $4,892,450.00</span>
+<span class="cm"># Total Cost:     $3,644,617.50</span></code></pre>
+
+    <h2 id="testing">Testing Strategy</h2>
+    <p>The <code>tests/</code> directory contains a pytest suite covering the core valuation logic. Good test coverage is what allows a pricing model to be refactored, extended, or redeployed with confidence — it is the production-readiness marker that distinguishes a notebook from an engineering artefact.</p>
+
+    <div class="code-label">
+      <span>tests/test_processor.py</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">import</span> pytest
+<span class="kw">from</span> pricing_model.contract_pricer <span class="kw">import</span> ContractPricer
+<span class="kw">from</span> unittest.mock <span class="kw">import</span> MagicMock
+
+<span class="kw">def</span> <span class="fn">test_profitable_contract</span>():
+    <span class="cm"># Mock forecaster: inject at $5, withdraw at $12</span>
+    forecaster = <span class="fn">MagicMock</span>()
+    forecaster.<span class="fn">predict</span>.<span class="fn">side_effect</span> = <span class="kw">lambda</span> d: <span class="nb">5.0</span> <span class="kw">if</span> d.month < <span class="nb">6</span> <span class="kw">else</span> <span class="nb">12.0</span>
+
+    pricer  = <span class="fn">ContractPricer</span>(forecaster)
+    results = pricer.<span class="fn">value_contract</span>(
+        injection_dates  = [<span class="st">'2021-01-01'</span>],
+        withdrawal_dates = [<span class="st">'2021-09-01'</span>],
+        injection_rate=<span class="nb">1000000</span>, withdrawal_rate=<span class="nb">1000000</span>,
+        max_volume=<span class="nb">2000000</span>, storage_cost_per_month=<span class="nb">100000</span>,
+        processing_fee=<span class="nb">10000</span>, transport_cost=<span class="nb">50000</span>
+    )
+    <span class="kw">assert</span> results[<span class="st">'contract_value'</span>] > <span class="nb">0</span>
+
+<span class="cm"># Run the full suite</span>
+<span class="cm"># $ pytest tests/ -v --tb=short</span></code></pre>
+
+    <h2 id="stack">Technology Stack</h2>
+    <div class="metric-row">
+      <div class="metric-card"><span class="m-value">Python</span><span class="m-label">Statsmodels ARIMA</span></div>
+      <div class="metric-card"><span class="m-value">Streamlit</span><span class="m-label">Interactive UI</span></div>
+      <div class="metric-card"><span class="m-value">pytest</span><span class="m-label">Unit Test Coverage</span></div>
+      <div class="metric-card"><span class="m-value">Plotly</span><span class="m-label">Interactive Charts</span></div>
+    </div>
+
+    <h2 id="setup">Installation &amp; Quickstart</h2>
+    <div class="code-label">
+      <span>Terminal — Installation</span>
+      <span style="color:#EF9F27">Shell</span>
+    </div>
+    <pre><code><span class="cm"># 1. Clone the repository</span>
+git clone https://github.com/arko-saha/Prototype-Pricing-Model.git
+cd Prototype-Pricing-Model
+
+<span class="cm"># 2. (Recommended) create a virtual environment</span>
+python -m venv .venv &amp;&amp; source .venv/bin/activate
+
+<span class="cm"># 3. Install dependencies</span>
+pip install -r requirements.txt
+
+<span class="cm"># 4. Launch the dashboard</span>
+streamlit run app.py
+
+<span class="cm"># 5. Or run the test suite</span>
+pytest tests/ -v</code></pre>
+
+    <h2 id="api">Programmatic API</h2>
+    <p>The package is designed to be easily embedded into larger pipelines. The following snippet demonstrates a full valuation cycle using the Python API:</p>
+
+    <div class="code-label">
+      <span>programmatic_pricing.py</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">from</span> pricing_model.forecaster <span class="kw">import</span> NaturalGasForecaster
+<span class="kw">from</span> pricing_model.contract_pricer <span class="kw">import</span> ContractPricer
+
+<span class="cm"># Initialise with the historical price dataset</span>
+forecaster = <span class="fn">NaturalGasForecaster</span>(<span class="st">"Nat_Gas.csv"</span>)
+pricer     = <span class="fn">ContractPricer</span>(forecaster)
+
+<span class="cm"># Define a winter storage strategy</span>
+results = pricer.<span class="fn">value_contract</span>(
+    injection_dates   = [<span class="st">'2021-04-01'</span>, <span class="st">'2021-05-01'</span>, <span class="st">'2021-06-01'</span>],
+    withdrawal_dates  = [<span class="st">'2021-11-01'</span>, <span class="st">'2021-12-01'</span>, <span class="st">'2022-01-01'</span>],
+    injection_rate    = <span class="nb">1000000</span>,
+    withdrawal_rate   = <span class="nb">1000000</span>,
+    max_volume        = <span class="nb">2000000</span>,
+    storage_cost_per_month = <span class="nb">100000</span>,
+    processing_fee    = <span class="nb">10000</span>,
+    transport_cost    = <span class="nb">50000</span>
+)
+
+<span class="fn">print</span>(<span class="st">f"Contract Value: ${results['contract_value']:,.2f}"</span>)
+<span class="fn">print</span>(<span class="st">f"Total Revenue:  ${results['total_revenue']:,.2f}"</span>)
+<span class="fn">print</span>(<span class="st">f"Total Cost:     ${results['total_cost']:,.2f}"</span>)</code></pre>
+
+    <h2 id="lessons">MLOps Lessons Learned</h2>
+    <div class="callout warn">
+      <strong>Design principle:</strong> A model lives in production longer than it lives in development. Structuring code as an installable package with a clean API from day one reduces the cost of every future change — CI integration, API wrapping, or model swaps become straightforward rather than risky.
+    </div>
+
+    <p>This project reinforces several practical MLOps principles:</p>
+    <ul>
+      <li><strong>Separation of concerns</strong> — the forecaster, the pricer, the CLI, and the UI are independently testable and interchangeable. Swapping ARIMA for Prophet or XGBoost only requires changing <code>forecaster.py</code>.</li>
+      <li><strong>Encapsulate complexity, expose simplicity</strong> — callers pass in dates and parameters; they do not need to know anything about ARIMA internals or pandas date arithmetic.</li>
+      <li><strong>Test your business logic, not your framework</strong> — the pytest suite mocks the forecaster so that pricing logic can be verified against a synthetic price schedule, decoupling valuation correctness from forecasting accuracy.</li>
+      <li><strong>Performance matters at the UI layer</strong> — <code>@st.cache_resource</code> ensures the ARIMA fit (which is computationally non-trivial) happens once, not on every Streamlit reruns triggered by user interaction.</li>
+    </ul>
+
+    <h2 id="future">Extensions and Future Work</h2>
+    <p>This system is deliberately built to be extensible. Several natural next steps include:</p>
+    <ul>
+      <li>Replacing ARIMA with a more sophisticated ensemble (e.g. Prophet + XGBoost residual correction) for improved long-horizon accuracy.</li>
+      <li>Adding a Monte Carlo simulation layer that generates a distribution of contract values under price uncertainty — moving from point estimates to probabilistic risk assessment.</li>
+      <li>Wrapping the pricing engine in a FastAPI REST endpoint, enabling integration with trading system dashboards or portfolio management tools.</li>
+      <li>Containerising the application with Docker for reproducible deployment across environments.</li>
+    </ul>
+
+    <hr/>
+
+    <div class="callout note">
+      <strong>Repository:</strong> Full source code, tests, and the historical dataset are available at <a href="https://github.com/arko-saha/Prototype-Pricing-Model" target="_blank">github.com/arko-saha/Prototype-Pricing-Model</a>. Issues, forks, and pull requests are welcome.
+    </div>
+
+  </article>
+
+  <aside class="post-sidebar">
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Table of Contents</p>
+      <nav aria-label="Article sections">
+        <ul class="toc-nav">
+          <li><a href="#problem">The problem</a></li>
+          <li><a href="#architecture">System architecture</a></li>
+          <li><a href="#arima">ARIMA forecaster</a></li>
+          <li><a href="#valuation">Valuation engine</a></li>
+          <li><a href="#streamlit">Streamlit dashboard</a></li>
+          <li><a href="#cli">CLI module</a></li>
+          <li><a href="#testing">Testing strategy</a></li>
+          <li><a href="#stack">Technology stack</a></li>
+          <li><a href="#setup">Setup &amp; quickstart</a></li>
+          <li><a href="#api">Programmatic API</a></li>
+          <li><a href="#lessons">MLOps lessons</a></li>
+          <li><a href="#future">Future work</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Project Links</p>
+      <div style="display:flex;flex-direction:column;gap:.6rem;">
+        <a href="https://github.com/arko-saha/Prototype-Pricing-Model" target="_blank" rel="noopener" class="card-link mono">GitHub repo ↗</a>
+        <a href="index.html#projects" class="card-link mono">All projects ↗</a>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Tags</p>
+      <div class="skills-cloud" style="margin-top:.5rem">
+        <span class="skill-tag">MLOps</span>
+        <span class="skill-tag">Quant Finance</span>
+        <span class="skill-tag">Time Series</span>
+        <span class="skill-tag">Python</span>
+        <span class="skill-tag">Streamlit</span>
+        <span class="skill-tag">ARIMA</span>
+      </div>
+    </div>
+    <div class="recruiter-cta" style="margin-top:1.25rem">
+      <p class="recruiter-cta-title">FlameFactory</p>
+      <p class="recruiter-cta-sub">Founder &amp; CEO building AI-first products at FlameFactory. Open to strategic partnerships and investment conversations.</p>
+      <a href="mailto:arkosaha.ruet@gmail.com" class="btn">Get in Touch ↗</a>
+    </div>
+  </aside>
+</div>
+
+<div class="container">
+  <div class="post-footer">
+    <p class="post-footer-label">Continue reading</p>
+    <div class="post-nav-grid">
+      <a href="post-fico-bucketing.html" class="post-nav-card">
+        <span class="pnc-dir">← Previous</span>
+        <span class="pnc-title">Why Your FICO Bucketing Strategy Is Probably Suboptimal — and How to Fix It</span>
+      </a>
+      <a href="post-brain-tumour-detection.html" class="post-nav-card">
+        <span class="pnc-dir">Next →</span>
+        <span class="pnc-title">NeuroScan AI: Deep Learning for Brain Tumour Classification from MRI Scans</span>
+      </a>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer class="footer" role="contentinfo">
+  <div class="container footer-inner">
+    <p class="mono footer-copy">© 2026 Arko Saha · <a href="index.html">Portfolio</a> · <a href="blog.html">Blog</a></p>
+    <p class="mono footer-right">London, UK · Founder &amp; CEO, FlameFactory</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script>
+const tocLinks = document.querySelectorAll('.toc-nav a');
+const headings = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+function updateToc() {
+  let active = '';
+  headings.forEach(h => { if (window.scrollY >= h.offsetTop - 120) active = h.id; });
+  tocLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + active); });
+}
+window.addEventListener('scroll', updateToc, { passive: true });
+updateToc();
+</script>
+</body>
+</html>

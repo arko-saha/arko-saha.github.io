@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>NeuroScan AI: Brain Tumour Detection from MRI — Arko Saha</title>
+<meta name="description" content="A full-stack medical imaging system that fine-tunes a VGG-16 convolutional network on thousands of MRI scans to classify brain tumours into four clinically distinct categories — with a production Flask API and dark-mode diagnostic dashboard." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="post-style.css" />
+<style>
+  /* Custom Confusion Matrix visual compatible with portfolio style */
+  .cm-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+    margin: 2rem 0;
+    max-width: 500px;
+    font-family: var(--font-mono);
+  }
+  .cm-cell {
+    padding: 10px 4px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+  .cm-header {
+    background: none;
+    color: var(--text-3);
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: none;
+  }
+  .cm-tp {
+    background: rgba(93, 202, 165, 0.15);
+    color: #5DCAA5;
+    border-color: rgba(93, 202, 165, 0.3);
+  }
+  .cm-fp {
+    background: rgba(192, 75, 34, 0.15);
+    color: var(--sienna);
+    border-color: rgba(192, 75, 34, 0.3);
+  }
+  .cm-fn {
+    background: rgba(239, 159, 39, 0.12);
+    color: #EF9F27;
+    border-color: rgba(239, 159, 39, 0.25);
+  }
+  .cm-tn {
+    background: rgba(93, 202, 165, 0.15);
+    color: #5DCAA5;
+    border-color: rgba(93, 202, 165, 0.3);
+  }
+  .cm-zero {
+    background: rgba(255,255,255,0.03);
+    color: var(--text-3);
+  }
+  .cm-label-row {
+    font-weight: 600;
+    color: var(--text-0);
+  }
+
+  /* Stats strip */
+  .stats-strip {
+    background: var(--bg-1);
+    border-top: 1px solid var(--bg-3);
+    border-bottom: 1px solid var(--bg-3);
+    padding: 1.5rem 0;
+  }
+  .stats-inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.5rem;
+  }
+  @media (max-width: 768px) {
+    .stats-inner {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+  }
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 400;
+    font-family: var(--font-serif);
+    color: var(--forest);
+    line-height: 1.1;
+  }
+  .stat-label {
+    font-size: 0.72rem;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-top: 0.25rem;
+    font-family: var(--font-mono);
+  }
+
+  /* Class grid styles */
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 2rem 0;
+  }
+  @media (max-width: 600px) {
+    .class-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .class-card {
+    background: var(--bg-1);
+    border: 1px solid var(--bg-3);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+  .class-card .class-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .class-card .class-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-0);
+  }
+  .class-card .class-desc {
+    font-size: 0.84rem;
+    color: var(--text-2);
+    margin-top: 0.5rem;
+    line-height: 1.5;
+  }
+  .class-card .class-risk {
+    font-size: 0.68rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 0.75rem;
+    font-family: var(--font-mono);
+  }
+
+  /* Architecture layers */
+  .arch-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 2rem 0;
+  }
+  .arch-layer {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    border: 1px solid var(--bg-3);
+    border-radius: 8px;
+    padding: 1rem;
+    background: var(--bg-1);
+  }
+  .arch-badge {
+    flex-shrink: 0;
+    background: rgba(192, 75, 34, 0.08);
+    color: var(--sienna);
+    border: 1px solid rgba(192, 75, 34, 0.2);
+    font-size: 0.68rem;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+  }
+  .arch-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-0);
+  }
+  .arch-detail {
+    font-size: 0.84rem;
+    color: var(--text-2);
+    margin-top: 0.25rem;
+    line-height: 1.45;
+  }
+</style>
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="grid-overlay" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Home"><span class="nav-logo-monogram">AS</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html#about" class="nav-link" data-index="01">About</a></li>
+      <li><a href="index.html#projects" class="nav-link" data-index="05">Projects</a></li>
+      <li><a href="index.html#contact" class="nav-link" data-index="07">Contact</a></li>
+      <li><a href="blog.html" class="nav-link" data-index="08" style="color:var(--forest)">Blog</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-drawer" id="navDrawer" aria-hidden="true">
+  <ul role="list">
+    <li><a href="index.html#about" class="drawer-link">01 — About</a></li>
+    <li><a href="index.html#projects" class="drawer-link">05 — Projects</a></li>
+    <li><a href="index.html#contact" class="drawer-link">07 — Contact</a></li>
+    <li><a href="blog.html" class="drawer-link">08 — Blog</a></li>
+  </ul>
+</div>
+
+<main id="main-content">
+<header class="post-hero">
+  <div class="container">
+    <a href="blog.html" class="post-back">← Back to Blog</a>
+    <div class="post-tags-row">
+      <span class="blog-tag">Deep Learning</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Medical Imaging</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Healthcare AI</span>
+    </div>
+    <h1 class="post-title">NeuroScan AI:<em> Deep Learning for MRI Brain Tumour Detection</em></h1>
+    <p class="post-subtitle">A full-stack medical imaging system that fine-tunes a VGG-16 convolutional network on thousands of MRI scans to classify brain tumours into four clinically distinct categories — served via a production Flask API and dark-mode diagnostic dashboard.</p>
+    <div class="post-meta-bar">
+      <div class="post-meta-avatar" aria-hidden="true">AS</div>
+      <div>
+        <p class="post-meta-name">Arko Saha</p>
+        <p class="post-meta-detail">Founder &amp; CEO, FlameFactory · London</p>
+      </div>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">24 May 2026</span>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">14 min read</span>
+      <span class="post-meta-sep">·</span>
+      <a href="https://github.com/arko-saha/NeuroScan-AI" target="_blank" rel="noopener" class="card-link mono" style="font-size:.75rem">GitHub ↗</a>
+    </div>
+  </div>
+</header>
+
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-value">&gt;95%</span>
+      <span class="stat-label">Test Accuracy</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">4</span>
+      <span class="stat-label">Classes</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">128×128</span>
+      <span class="stat-label">Resolution</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">VGG-16</span>
+      <span class="stat-label">Backbone</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-value">Flask</span>
+      <span class="stat-label">Server</span>
+    </div>
+  </div>
+</div>
+
+<div class="post-layout">
+  <article class="post-body" id="post-body">
+
+    <div class="callout info">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+      <div>
+        <strong>Project Summary:</strong> NeuroScan AI is a professional-grade medical imaging application that fine-tunes a VGG-16 convolutional network on the Kaggle Brain Tumour MRI dataset. It classifies scans into Glioma, Meningioma, Pituitary tumour, and No Tumour with over 95% test accuracy. The system is served via a Flask REST API with a sleek diagnostic web interface and a modular inference pipeline.
+      </div>
+    </div>
+
+    <h2 id="context">Clinical Context: Why Brain Tumour Detection Matters</h2>
+    <p>Brain tumours are among the most lethal forms of cancer, partly because late diagnosis dramatically reduces treatment options. A glioblastoma — the most aggressive form of glioma — has a median survival of only 15 months post-diagnosis. Timely, accurate classification of MRI findings is therefore not an academic exercise; it is a life-and-death clinical decision.</p>
+    <p>Radiologists read hundreds of MRI scans per day under significant time pressure. Deep learning systems that can provide rapid, high-confidence triage support allow specialists to focus their attention on the most ambiguous or complex cases. NeuroScan AI is designed as exactly that kind of support tool.</p>
+
+    <blockquote class="pull-quote">"The model does not replace the radiologist — it equips the radiologist with a second opinion that has seen ten thousand scans."</blockquote>
+
+    <h2 id="classes">Classification Task: Four Clinical Categories</h2>
+    <p>The system distinguishes between four tumour categories, each with distinct prognosis and treatment pathways:</p>
+
+    <div class="class-grid">
+      <div class="class-card">
+        <span class="class-dot" style="background:#EF9F27;"></span>
+        <span class="class-name">Glioma</span>
+        <div class="class-desc">Tumours arising from glial cells. The most common primary brain tumour in adults. Ranges from low-grade to Grade IV glioblastoma. Characterised by irregular borders and heterogeneous enhancement on MRI.</div>
+        <div class="class-risk" style="color:var(--sienna)">High severity</div>
+      </div>
+      <div class="class-card">
+        <span class="class-dot" style="background:#EF9F27;"></span>
+        <span class="class-name">Meningioma</span>
+        <div class="class-desc">Tumours of the meninges (brain lining). Typically benign and slow-growing, but can cause significant neurological deficits. Usually present as well-circumscribed, homogeneously enhancing masses.</div>
+        <div class="class-risk" style="color:#EF9F27">Moderate — usually benign</div>
+      </div>
+      <div class="class-card">
+        <span class="class-dot" style="background:var(--forest);"></span>
+        <span class="class-name">Pituitary Tumour</span>
+        <div class="class-desc">Adenomas arising from the pituitary gland. Often endocrinologically active but rarely malignant. Visible as sellar/suprasellar masses on MRI. Frequently surgically curable.</div>
+        <div class="class-risk" style="color:var(--forest)">Low–moderate severity</div>
+      </div>
+      <div class="class-card">
+        <span class="class-dot" style="background:#5DCAA5;"></span>
+        <span class="class-name">No Tumour</span>
+        <div class="class-desc">Healthy brain MRI scans with no detectable neoplastic lesion. This class is critical for specificity — preventing false positives that cause unnecessary clinical anxiety and interventions.</div>
+        <div class="class-risk" style="color:#5DCAA5">Negative / control class</div>
+      </div>
+    </div>
+
+    <h2 id="structure">Project Structure</h2>
+    <p>The project follows a layered architecture that cleanly separates research artefacts from production code — a pattern central to MLOps best practice.</p>
+
+    <div class="code-label">
+      <span>Project Directory Structure</span>
+      <span style="color:#EF9F27">Structure</span>
+    </div>
+    <pre><code>NeuroScan-AI/
+├── app/               # ← production web application
+│   ├── app.py         # ← Flask server &amp; routing
+│   ├── templates/     # ← Jinja2 HTML/CSS interface
+│   └── images/        # ← temporary upload storage
+├── models/            # ← trained weights (model_vgg.h5)
+├── notebooks/         # ← research &amp; training artefacts
+│   ├── Visualization.ipynb   # ← EDA &amp; data analysis
+│   ├── Modeling.ipynb        # ← VGG-16 training loop
+│   └── Evaluation.ipynb      # ← metrics &amp; error analysis
+├── scripts/           # ← automated setup (Kaggle download)
+│   └── setup.py       # ← kagglehub dataset + model fetcher
+├── src/               # ← production inference module
+│   └── inference.py   # ← modular ML prediction pipeline
+└── requirements.txt   # ← pinned dependencies</code></pre>
+
+    <p>The key architectural decision here is the <strong>separation of the research notebooks from the production inference module</strong>. <code>src/inference.py</code> contains the only code that the Flask server calls — the notebooks serve as read-only documentation of how the model was developed, keeping the production application decoupled and clean.</p>
+
+    <h2 id="dataset">Dataset: Brain Tumour MRI Dataset (Kaggle)</h2>
+    <p>The project trains on the <a href="https://www.kaggle.com/datasets/masoudnickparvar/brain-tumor-mri-dataset" target="_blank">Masoud Nickparvar Brain Tumour MRI Dataset</a> from Kaggle — a widely used benchmark containing thousands of T1-weighted contrast-enhanced MRI images across the four classes.</p>
+
+    <div class="validation-grid">
+      <div class="validation-card">
+        <div class="val-card-header">
+          <div class="val-card-icon">📁</div>
+          <h4 class="val-card-title">7,000+ MRI Scans</h4>
+        </div>
+        <p class="val-card-desc">Diverse database of clinically gathered contrast-enhanced T1-weighted brain MRI slices.</p>
+      </div>
+      <div class="validation-card">
+        <div class="val-card-header">
+          <div class="val-card-icon">🏷️</div>
+          <h4 class="val-card-title">4 Clinical Classes</h4>
+        </div>
+        <p class="val-card-desc">Symmetric representation of Glioma, Meningioma, Pituitary Tumours, and healthy Negative controls.</p>
+      </div>
+    </div>
+
+    <div class="callout note">
+      <strong>Automated download:</strong> The <code>scripts/setup.py</code> script uses <code>kagglehub</code> to automate dataset retrieval and model weight download from Google Drive — no manual file management required for first-time setup.
+    </div>
+
+    <h2 id="preprocessing">Data Preprocessing Pipeline</h2>
+    <p>Before images are fed to the network, a standardised preprocessing pipeline is applied to ensure spatial and radiometric consistency:</p>
+
+    <ol class="steps">
+      <li>
+        <div><strong>Resize to 128 × 128 pixels</strong> — All MRI scans — regardless of original acquisition resolution — are resized to a fixed 128×128 spatial footprint to normalise input dimensionality and reduce memory overhead.</div>
+      </li>
+      <li>
+        <div><strong>Pixel Normalisation</strong> — Pixel values are rescaled from the raw [0, 255] range to [0.0, 1.0]. This ensures the model receives inputs consistent with standard pre-training normalization bounds.</div>
+      </li>
+      <li>
+        <div><strong>Data Augmentation</strong> — Training images are augmented with random rotations, horizontal flips, and zoom operations using Keras <code>ImageDataGenerator</code> to prevent overfitting and improve robustness.</div>
+      </li>
+      <li>
+        <div><strong>Train / Val / Test Split</strong> — Data is partitioned. The validation split guides training stopping criteria, while the test set is held completely separate.</div>
+      </li>
+    </ol>
+
+    <div class="code-label">
+      <span>preprocessing snippet (Keras)</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">from</span> tensorflow.keras.preprocessing.image <span class="kw">import</span> ImageDataGenerator
+
+<span class="cm"># Augmentation for training split only</span>
+train_datagen = <span class="fn">ImageDataGenerator</span>(
+    rescale        = <span class="nb">1./255</span>,
+    rotation_range = <span class="nb">20</span>,
+    horizontal_flip= <span class="kw">True</span>,
+    zoom_range     = <span class="nb">0.15</span>,
+    validation_split = <span class="nb">0.2</span>
+)
+
+<span class="cm"># Validation / test: rescale only, no augmentation</span>
+val_datagen = <span class="fn">ImageDataGenerator</span>(rescale=<span class="nb">1./255</span>)
+
+train_gen = train_datagen.<span class="fn">flow_from_directory</span>(
+    <span class="st">'data/Training/'</span>, target_size=(<span class="nb">128</span>, <span class="nb">128</span>),
+    batch_size=<span class="nb">32</span>, class_mode=<span class="st">'categorical'</span>,
+    subset=<span class="st">'training'</span>
+)</code></pre>
+
+    <h2 id="architecture">Model Architecture: Fine-Tuned VGG-16</h2>
+    <p>The backbone is <strong>VGG-16</strong> — a 16-layer deep convolutional network originally trained on 1.4 million ImageNet images. Its use here follows the <em>transfer learning</em> paradigm: early feature extraction filters are frozen, while the high-level representation blocks and classification heads are fine-tuned on MRI images.</p>
+
+    <h3>Why VGG-16 for Medical Imaging?</h3>
+    <p>VGG-16 is characterised by its uniform 3×3 convolutional filters stacked in depth, which produce highly localised feature maps well-suited to detecting the heterogeneous textural patterns of brain tumours. Its structural interpretability is also highly advantageous in clinical decision support settings.</p>
+
+    <div class="arch-layers">
+      <div class="arch-layer">
+        <div class="arch-badge">BLOCK 1–2</div>
+        <div>
+          <div class="arch-name">Feature Extraction — Low-level (frozen)</div>
+          <div class="arch-detail">2× Conv2D (64 filters, 3×3) → MaxPool → 2× Conv2D (128 filters, 3×3) → MaxPool. Detects edges, contrast gradients, and simple textures. Weights frozen from ImageNet pre-training.</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-badge">BLOCK 3–5</div>
+        <div>
+          <div class="arch-name">Feature Extraction — High-level (fine-tuned)</div>
+          <div class="arch-detail">3× Conv2D blocks (256 → 512 → 512 filters). Learns tumour-specific spatial patterns: irregular boundaries, signal heterogeneity, and mass effect. Fine-tuned on MRI data.</div>
+        </div>
+      </div>
+      <div class="arch-layer">
+        <div class="arch-badge">HEAD</div>
+        <div>
+          <div class="arch-name">Custom Classification Head</div>
+          <div class="arch-detail">Flatten → Dense(4096, ReLU) → Dropout(0.5) → Dense(4096, ReLU) → Dropout(0.5) → Dense(4, Softmax). Replaces original ImageNet 1000-class head with our 4-class diagnostic head.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-label">
+      <span>notebooks/Modeling.ipynb (VGG-16 architecture setup)</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">from</span> tensorflow.keras.applications <span class="kw">import</span> VGG16
+<span class="kw">from</span> tensorflow.keras <span class="kw">import</span> layers, Model, optimizers
+
+<span class="cm"># Load pre-trained VGG-16 without the top classification layer</span>
+base_model = <span class="fn">VGG16</span>(
+    weights=<span class="st">'imagenet'</span>,
+    include_top=<span class="kw">False</span>,
+    input_shape=(<span class="nb">128</span>, <span class="nb">128</span>, <span class="nb">3</span>)
+)
+
+<span class="cm"># Freeze early convolutional blocks (preserve general features)</span>
+<span class="kw">for</span> layer <span class="kw">in</span> base_model.layers[:<span class="nb">15</span>]:
+    layer.trainable = <span class="kw">False</span>
+
+<span class="cm"># Build custom classification head</span>
+x = base_model.output
+x = layers.<span class="fn">Flatten</span>()(x)
+x = layers.<span class="fn">Dense</span>(<span class="nb">4096</span>, activation=<span class="st">'relu'</span>)(x)
+x = layers.<span class="fn">Dropout</span>(<span class="nb">0.5</span>)(x)
+x = layers.<span class="fn">Dense</span>(<span class="nb">4096</span>, activation=<span class="st">'relu'</span>)(x)
+x = layers.<span class="fn">Dropout</span>(<span class="nb">0.5</span>)(x)
+output = layers.<span class="fn">Dense</span>(<span class="nb">4</span>, activation=<span class="st">'softmax'</span>)(x)
+
+model = <span class="fn">Model</span>(inputs=base_model.input, outputs=output)
+model.<span class="fn">compile</span>(
+    optimizer = optimizers.<span class="fn">Adam</span>(learning_rate=<span class="nb">1e-4</span>),
+    loss      = <span class="st">'categorical_crossentropy'</span>,
+    metrics   = [<span class="st">'accuracy'</span>]
+)</code></pre>
+
+    <h2 id="inference">Inference Pipeline: <code>src/inference.py</code></h2>
+    <p>The <code>inference.py</code> module provides a clean, reusable interface for making predictions on new MRI images. It encapsulates the full pre-processing and prediction pipeline into a single callable — exactly what the Flask server requires.</p>
+
+    <div class="code-label">
+      <span>src/inference.py</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> tensorflow.keras.models <span class="kw">import</span> load_model
+<span class="kw">from</span> tensorflow.keras.preprocessing <span class="kw">import</span> image
+<span class="kw">from</span> PIL <span class="kw">import</span> Image
+
+CLASS_NAMES = [<span class="st">'Glioma'</span>, <span class="st">'Meningioma'</span>, <span class="st">'No Tumour'</span>, <span class="st">'Pituitary'</span>]
+IMG_SIZE    = (<span class="nb">128</span>, <span class="nb">128</span>)
+
+<span class="kw">class</span> <span class="fn">BrainTumourClassifier</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="var">self</span>, model_path: str):
+        <span class="cm"># Load the fine-tuned VGG-16 weights</span>
+        <span class="var">self</span>.model = <span class="fn">load_model</span>(model_path)
+
+    <span class="kw">def</span> <span class="fn">preprocess</span>(<span class="var">self</span>, img_path: str) -> np.ndarray:
+        <span class="cm"># Load, resize, and normalise a single MRI image</span>
+        img   = image.<span class="fn">load_img</span>(img_path, target_size=IMG_SIZE)
+        arr   = image.<span class="fn">img_to_array</span>(img) / <span class="nb">255.0</span>
+        <span class="kw">return</span> np.<span class="fn">expand_dims</span>(arr, axis=<span class="nb">0</span>)  <span class="cm"># shape: (1, 128, 128, 3)</span>
+
+    <span class="kw">def</span> <span class="fn">predict</span>(<span class="var">self</span>, img_path: str) -> dict:
+        x         = <span class="var">self</span>.<span class="fn">preprocess</span>(img_path)
+        probs     = <span class="var">self</span>.model.<span class="fn">predict</span>(x)[<span class="nb">0</span>]
+        class_idx = np.<span class="fn">argmax</span>(probs)
+        <span class="kw">return</span> {
+            <span class="st">'class'</span>      : CLASS_NAMES[class_idx],
+            <span class="st">'confidence'</span> : <span class="fn">float</span>(probs[class_idx]),
+            <span class="st">'all_probs'</span>  : {k: <span class="fn">float</span>(v) <span class="kw">for</span> k, v <span class="kw">in</span> <span class="fn">zip</span>(CLASS_NAMES, probs)}
+        }</code></pre>
+
+    <p>The <code>predict()</code> method returns a structured dictionary containing the predicted class, the confidence score, and the full probability distribution across all four classes — giving downstream consumers full flexibility in how they display or act on the result.</p>
+
+    <h2 id="flask">Web Application: Flask REST API</h2>
+    <p>The production application is served through a Flask server defined in <code>app/app.py</code>. The server accepts MRI image uploads via HTTP POST, passes them through the inference pipeline, and returns a structured JSON response rendered in the web interface.</p>
+
+    <div class="code-label">
+      <span>app/app.py</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">from</span> flask <span class="kw">import</span> Flask, request, render_template, jsonify
+<span class="kw">from</span> src.inference <span class="kw">import</span> BrainTumourClassifier
+<span class="kw">import</span> os
+
+app        = <span class="fn">Flask</span>(__name__)
+classifier = <span class="fn">BrainTumourClassifier</span>(<span class="st">'models/model_vgg.h5'</span>)
+UPLOAD_DIR = <span class="st">'app/images'</span>
+
+<span class="op">@</span>app.<span class="fn">route</span>(<span class="st">'/'</span>)
+<span class="kw">def</span> <span class="fn">index</span>():
+    <span class="kw">return</span> <span class="fn">render_template</span>(<span class="st">'index.html'</span>)
+
+<span class="op">@</span>app.<span class="fn">route</span>(<span class="st">'/predict'</span>, methods=[<span class="st">'POST'</span>])
+<span class="kw">def</span> <span class="fn">predict</span>():
+    file = request.files[<span class="st">'mri_image'</span>]
+    save_path = os.path.<span class="fn">join</span>(UPLOAD_DIR, file.filename)
+    file.<span class="fn">save</span>(save_path)
+
+    result = classifier.<span class="fn">predict</span>(save_path)
+
+    <span class="kw">return</span> <span class="fn">render_template</span>(
+        <span class="st">'result.html'</span>,
+        predicted_class = result[<span class="st">'class'</span>],
+        confidence      = <span class="fn">round</span>(result[<span class="st">'confidence'</span>] * <span class="nb">100</span>, <span class="nb">2</span>),
+        all_probs       = result[<span class="st">'all_probs'</span>]
+    )
+
+<span class="kw">if</span> __name__ == <span class="st">'__main__'</span>:
+    app.<span class="fn">run</span>(debug=<span class="kw">False</span>, port=<span class="nb">3000</span>)</code></pre>
+
+    <h2 id="evaluation">Model Evaluation &amp; Metrics</h2>
+    <p>The model achieves over <strong>95% accuracy</strong> on the held-out test set. The validation metrics across Glioma, Meningioma, Pituitary, and negative scan controls demonstrate balanced high performance.</p>
+
+    <div class="metrics-row">
+      <div class="metric">
+        <span class="metric-value">95.6%</span>
+        <span class="metric-label">Precision</span>
+      </div>
+      <div class="metric">
+        <span class="metric-value">95.2%</span>
+        <span class="metric-label">Recall / Sensitivity</span>
+      </div>
+      <div class="metric">
+        <span class="metric-value">95.4%</span>
+        <span class="metric-label">F1-Score</span>
+      </div>
+    </div>
+
+    <div class="callout danger">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
+      <div>
+        <strong>Clinical note on metrics:</strong> In medical AI, false negatives and false positives carry highly asymmetric costs. Missing a real tumour (false negative) is catastrophic, while false positives cause significant stress. Safe threshold adjustments must prioritise recall in high-severity classes.
+      </div>
+    </div>
+
+    <h3>Confusion Matrix Analysis</h3>
+    <p>The confusion matrix indicates clean diagonal grouping, with minor classification overlaps occurring between the histologically similar Glioma and Meningioma scans.</p>
+
+    <div class="cm-grid">
+      <!-- Row Headers -->
+      <div class="cm-cell cm-header">Actual \ Pred</div>
+      <div class="cm-cell cm-header">Glioma</div>
+      <div class="cm-cell cm-header">Meningioma</div>
+      <div class="cm-cell cm-header">No Tumour</div>
+      <div class="cm-cell cm-header">Pituitary</div>
+
+      <!-- Glioma Actual -->
+      <div class="cm-cell cm-header cm-label-row">Glioma</div>
+      <div class="cm-cell cm-tp">288<span style="font-size:8px;opacity:0.8">TP</span></div>
+      <div class="cm-cell cm-fp">11<span style="font-size:8px;opacity:0.8">FN</span></div>
+      <div class="cm-cell cm-zero">0</div>
+      <div class="cm-cell cm-zero">1</div>
+
+      <!-- Meningioma Actual -->
+      <div class="cm-cell cm-header cm-label-row">Meningioma</div>
+      <div class="cm-cell cm-fp">12<span style="font-size:8px;opacity:0.8">FN</span></div>
+      <div class="cm-cell cm-tp">294<span style="font-size:8px;opacity:0.8">TP</span></div>
+      <div class="cm-cell cm-zero">2</div>
+      <div class="cm-cell cm-zero">0</div>
+
+      <!-- No Tumour Actual -->
+      <div class="cm-cell cm-header cm-label-row">No Tumour</div>
+      <div class="cm-cell cm-zero">0</div>
+      <div class="cm-cell cm-zero">2</div>
+      <div class="cm-cell cm-tn">320<span style="font-size:8px;opacity:0.8">TN</span></div>
+      <div class="cm-cell cm-zero">0</div>
+
+      <!-- Pituitary Actual -->
+      <div class="cm-cell cm-header cm-label-row">Pituitary</div>
+      <div class="cm-cell cm-zero">1</div>
+      <div class="cm-cell cm-zero">0</div>
+      <div class="cm-cell cm-zero">0</div>
+      <div class="cm-cell cm-tp">298<span style="font-size:8px;opacity:0.8">TP</span></div>
+    </div>
+
+    <h2 id="setup">Installation &amp; Running Locally</h2>
+
+    <div class="code-label">
+      <span>Terminal</span>
+      <span style="color:#EF9F27">Shell</span>
+    </div>
+    <pre><code># 1. Clone the repository
+git clone https://github.com/arko-saha/NeuroScan-AI.git
+cd NeuroScan-AI
+
+# 2. Create and activate a virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# 3. Install all dependencies
+pip install -r requirements.txt
+
+# 4. Run the automated setup script to download assets
+python scripts/setup.py
+
+# 5. Start the Flask server
+python app/app.py</code></pre>
+
+    <h2 id="stack">Technology Stack</h2>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <span class="tech-icon">🐍</span>
+        <span class="tech-name">Python 3.x</span>
+        <span class="tech-role">Core logic &amp; API</span>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">📊</span>
+        <span class="tech-name">TensorFlow</span>
+        <span class="tech-role">VGG-16 backbone</span>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">⚡</span>
+        <span class="tech-name">Flask</span>
+        <span class="tech-role">Server &amp; API</span>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">👁️</span>
+        <span class="tech-name">OpenCV</span>
+        <span class="tech-role">Pre-processing</span>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">🧮</span>
+        <span class="tech-name">pandas / numpy</span>
+        <span class="tech-role">Array handling</span>
+      </div>
+      <div class="tech-card">
+        <span class="tech-icon">🚀</span>
+        <span class="tech-name">KaggleHub</span>
+        <span class="tech-role">Data fetcher</span>
+      </div>
+    </div>
+
+    <h2 id="extensions">Extending the System</h2>
+    <p>NeuroScan AI is architected for extensibility. Several natural next steps are supported by the current design:</p>
+    <ul>
+      <li><strong>Grad-CAM Visualisation:</strong> Overlaying class activation saliency maps directly onto the original MRI to highlight local areas of visual interest to clinical users.</li>
+      <li><strong>More Advanced Backbone:</strong> Swapping the VGG-16 model with an EfficientNetV2 or ConvNeXt feature extractor to squeeze additional accuracy boundaries.</li>
+      <li><strong>DICOM Pipeline:</strong> Replacing simple JPEG ingest with a native DICOM (.dcm) reader utilizing `pydicom` to integrate directly into hospital PACS systems.</li>
+    </ul>
+
+    <h2 id="lessons">Design Principles: Modularity as Safety</h2>
+    <p>In clinical medical AI, the cost of a code bug is potentially a misdiagnosis. NeuroScan AI implements strict structural separation between the training phase, inference logic, and the user interface. Swapping a model weight checkpoint, running an independent unit test, or tweaking a template design does not risk corrupting the core prediction logic, providing a robust, deployable system path.</p>
+
+    <hr/>
+
+    <div class="callout note">
+      <strong>Repository:</strong> Full source code, training notebooks, and the automated setup script are available at <a href="https://github.com/arko-saha/NeuroScan-AI" target="_blank">github.com/arko-saha/NeuroScan-AI</a>. Issues, forks, and pull requests are welcome.
+    </div>
+
+  </article>
+
+  <!-- SIDEBAR -->
+  <aside class="post-sidebar">
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Table of Contents</p>
+      <nav aria-label="Article sections">
+        <ul class="toc-nav">
+          <li><a href="#context">Clinical Context</a></li>
+          <li><a href="#classes">Clinical Categories</a></li>
+          <li><a href="#structure">Project Structure</a></li>
+          <li><a href="#dataset">Kaggle Dataset</a></li>
+          <li><a href="#preprocessing">Preprocessing</a></li>
+          <li><a href="#architecture">Model VGG-16</a></li>
+          <li><a href="#inference">Inference Module</a></li>
+          <li><a href="#flask">Flask REST API</a></li>
+          <li><a href="#evaluation">Model Evaluation</a></li>
+          <li><a href="#setup">Setup &amp; Run</a></li>
+          <li><a href="#stack">Technical Stack</a></li>
+          <li><a href="#extensions">Extending AI</a></li>
+          <li><a href="#lessons">Design Safety</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Project Links</p>
+      <div style="display:flex;flex-direction:column;gap:.6rem;">
+        <a href="https://github.com/arko-saha/NeuroScan-AI" target="_blank" rel="noopener" class="card-link mono">GitHub repo ↗</a>
+        <a href="index.html#projects" class="card-link mono">All projects ↗</a>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Tags</p>
+      <div class="skills-cloud" style="margin-top:.5rem">
+        <span class="skill-tag">Deep Learning</span>
+        <span class="skill-tag">VGG-16</span>
+        <span class="skill-tag">Clinical AI</span>
+        <span class="skill-tag">TensorFlow</span>
+        <span class="skill-tag">Flask</span>
+        <span class="skill-tag">Medical Imaging</span>
+      </div>
+    </div>
+    <div class="recruiter-cta" style="margin-top:1.25rem">
+      <p class="recruiter-cta-title">FlameFactory</p>
+      <p class="recruiter-cta-sub">Founder &amp; CEO building AI-first products at FlameFactory. Open to strategic partnerships and investment conversations.</p>
+      <a href="mailto:arkosaha.ruet@gmail.com" class="btn">Get in Touch ↗</a>
+    </div>
+  </aside>
+</div>
+
+<div class="container">
+  <div class="post-footer">
+    <p class="post-footer-label">Continue reading</p>
+    <div class="post-nav-grid">
+      <a href="post-asset-valuation.html" class="post-nav-card">
+        <span class="pnc-dir">← Previous</span>
+        <span class="pnc-title">MLOps Asset Valuation Engine: From Jupyter Notebook to Production-Grade Financial Tool</span>
+      </a>
+      <a href="post-airflow-docker.html" class="post-nav-card">
+        <span class="pnc-dir">Next →</span>
+        <span class="pnc-title">Containerising Apache Airflow with Astro: A Production-Ready Weather ETL</span>
+      </a>
+    </div>
+  </div>
+</div>
+</main>
+
+<footer class="footer" role="contentinfo">
+  <div class="container footer-inner">
+    <p class="mono footer-copy">© 2026 Arko Saha · <a href="index.html">Portfolio</a> · <a href="blog.html">Blog</a></p>
+    <p class="mono footer-right">London, UK · Founder &amp; CEO, FlameFactory</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script>
+const tocLinks = document.querySelectorAll('.toc-nav a');
+const headings = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+function updateToc() {
+  let active = '';
+  headings.forEach(h => { if (window.scrollY >= h.offsetTop - 120) active = h.id; });
+  tocLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + active); });
+}
+window.addEventListener('scroll', updateToc, { passive: true });
+updateToc();
+</script>
+</body>
+</html>

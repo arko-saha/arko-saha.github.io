@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Containerising Apache Airflow with Astro: A Production-Ready Weather ETL — Arko Saha</title>
+<meta name="description" content="How I built a production-grade, containerised ETL pipeline with Apache Airflow, Astronomer Astro CLI, PostgreSQL and Docker — fetching real-time London weather data." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="post-style.css" />
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="grid-overlay" aria-hidden="true"></div>
+
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Home"><span class="nav-logo-monogram">AS</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html#about" class="nav-link" data-index="01">About</a></li>
+      <li><a href="index.html#projects" class="nav-link" data-index="05">Projects</a></li>
+      <li><a href="index.html#contact" class="nav-link" data-index="07">Contact</a></li>
+      <li><a href="blog.html" class="nav-link" data-index="08" style="color:var(--forest)">Blog</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="nav-drawer" id="navDrawer" aria-hidden="true">
+  <ul role="list">
+    <li><a href="index.html#about" class="drawer-link">01 — About</a></li>
+    <li><a href="index.html#projects" class="drawer-link">05 — Projects</a></li>
+    <li><a href="index.html#contact" class="drawer-link">07 — Contact</a></li>
+    <li><a href="blog.html" class="drawer-link">08 — Blog</a></li>
+  </ul>
+</div>
+
+<main id="main-content">
+<header class="post-hero">
+  <div class="container">
+    <a href="blog.html" class="post-back">← Back to Blog</a>
+    <div class="post-tags-row">
+      <span class="blog-tag">MLOps</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Apache Airflow</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Data Engineering</span>
+    </div>
+    <h1 class="post-title">Containerising Apache Airflow with Astro:<em> A Production-Ready Weather ETL</em></h1>
+    <p class="post-subtitle">Most Airflow tutorials show you a DAG running on your laptop. I wanted something actually deployable. This post documents a real-time ingestion pipeline — Open-Meteo → PostgreSQL — containerised with Astro CLI and monitored via dBeaver.</p>
+    <div class="post-meta-bar">
+      <div class="post-meta-avatar" aria-hidden="true">AS</div>
+      <div>
+        <p class="post-meta-name">Arko Saha</p>
+        <p class="post-meta-detail">Founder &amp; CEO, FlameFactory · London</p>
+      </div>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">05 Jan 2026</span>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">7 min read</span>
+      <span class="post-meta-sep">·</span>
+      <a href="https://github.com/arko-saha/Building-End-To-End-ETL-Pipeline-For-Weather-Monitoring-Using-AirFlow-And-Astro" target="_blank" rel="noopener" class="card-link mono" style="font-size:.75rem">GitHub ↗</a>
+    </div>
+  </div>
+</header>
+
+<div class="post-layout">
+  <article class="post-body" id="post-body">
+
+    <h2 id="motivation">Beyond the "Hello World" DAG</h2>
+    <p>Every Airflow tutorial has the same structure: define a DAG, add two BashOperators that echo "hello" and "world", run it locally, declare victory. None of them show you how to handle a real data source, a real database connection, or a local environment that actually mirrors what you'd deploy to a cloud platform.</p>
+    <p>This project was my attempt to build the real thing. The pipeline fetches live weather data for London from the Open-Meteo API every time it runs, transforms the raw JSON into structured records, and loads them into a dedicated PostgreSQL instance — all orchestrated by Airflow, running entirely in Docker via Astronomer's Astro CLI.</p>
+
+    <div class="metric-row">
+      <div class="metric-card"><span class="m-value">4</span><span class="m-label">Services in Docker</span></div>
+      <div class="metric-card"><span class="m-value">0</span><span class="m-label">API keys needed</span></div>
+      <div class="metric-card"><span class="m-value">3</span><span class="m-label">ETL tasks in DAG</span></div>
+      <div class="metric-card"><span class="m-value">5432</span><span class="m-label">Postgres port</span></div>
+    </div>
+
+    <h2 id="stack">Technical Stack</h2>
+    <p>The stack was chosen deliberately to demonstrate a production-ready MLOps foundational layer. Before you can train models, you need reliable data ingestion — and that means treating your pipelines like software, not ad-hoc scripts.</p>
+
+    <div class="callout info">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+      <div>
+        <strong>Stack:</strong> Apache Airflow (TaskFlow API) · Astronomer Astro CLI · Docker &amp; Docker Compose · PostgreSQL 12 · Open-Meteo API (free, no key) · dBeaver (monitoring)
+      </div>
+    </div>
+
+    <p>The choice of Astro CLI over a vanilla Airflow Docker Compose setup is significant. Astro manages the container lifecycle, handles the scheduler/webserver/triggerer topology automatically, and provides a local dev experience that is much closer to what Astronomer's managed cloud deployment looks like. Fewer surprises when you go to production.</p>
+
+    <h2 id="architecture">Pipeline Architecture</h2>
+    <p>The pipeline follows a classic ETL pattern with three distinct task functions, connected using Airflow's TaskFlow API (the <code>@task</code> decorator model introduced in Airflow 2.0):</p>
+
+    <ol class="steps">
+      <li>
+        <div><strong>Extract</strong> — A Python task calls the Open-Meteo API at London's coordinates (51.5°N, -0.1°W) and returns the raw JSON response. The task uses <code>response.raise_for_status()</code> to fail hard on HTTP errors — intentionally. Airflow's retry mechanism handles transient failures; partial data entering the transform step is worse than no data at all.</div>
+      </li>
+      <li>
+        <div><strong>Transform</strong> — The JSON is parsed to extract five key metrics: temperature (°C), windspeed (km/h), wind direction (degrees), WMO weather code, and a server-side timestamp. The result is a typed Python dict — no ORM, no dataframe overhead. Keep the transform layer thin and explicit.</div>
+      </li>
+      <li>
+        <div><strong>Load</strong> — The structured record is inserted into a <code>weather_data</code> table in the <code>postgres-db</code> container using Airflow's <code>PostgresHook</code>. The hook resolves the connection from Airflow's encrypted connections store — credentials never appear in the DAG file.</div>
+      </li>
+    </ol>
+
+    <h2 id="dag">The DAG Code</h2>
+    <p>The TaskFlow API (<code>@task</code> decorator model, introduced in Airflow 2.0) eliminates the boilerplate of the older <code>PythonOperator</code> pattern and makes XCom data passing implicit — tasks return values and receive them as typed arguments, exactly as you'd write normal Python functions.</p>
+
+    <div class="code-label">
+      <span>dags/weather_etl.py</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">from</span> airflow.decorators <span class="kw">import</span> dag, task
+<span class="kw">from</span> airflow.providers.postgres.hooks.postgres <span class="kw">import</span> PostgresHook
+<span class="kw">from</span> datetime <span class="kw">import</span> datetime
+<span class="kw">import</span> requests
+
+<span class="op">@</span><span class="fn">dag</span>(
+    dag_id=<span class="st">"weather_etl_pipeline"</span>,
+    schedule_interval=<span class="st">"@hourly"</span>,
+    start_date=<span class="fn">datetime</span>(<span class="nb">2024</span>, <span class="nb">1</span>, <span class="nb">1</span>),
+    catchup=<span class="nb">False</span>,          <span class="cm"># critical: prevents backfill flood on first run</span>
+    tags=<span class="st">["etl", "weather"]</span>,
+)
+<span class="kw">def</span> <span class="fn">weather_etl</span>():
+
+    <span class="op">@</span><span class="fn">task</span>()
+    <span class="kw">def</span> <span class="fn">extract</span>() -> dict:
+        url = (
+            <span class="st">"https://api.open-meteo.com/v1/forecast"</span>
+            <span class="st">"?latitude=51.5&amp;longitude=-0.1"</span>
+            <span class="st">"&amp;current_weather=true"</span>
+        )
+        response = requests.<span class="fn">get</span>(url, timeout=<span class="nb">10</span>)
+        response.<span class="fn">raise_for_status</span>()   <span class="cm"># fail hard; let Airflow handle retry</span>
+        <span class="kw">return</span> response.<span class="fn">json</span>()
+
+    <span class="op">@</span><span class="fn">task</span>()
+    <span class="kw">def</span> <span class="fn">transform</span>(raw: dict) -> dict:
+        cw = raw[<span class="st">"current_weather"</span>]
+        <span class="kw">return</span> {
+            <span class="st">"timestamp"</span>:       cw[<span class="st">"time"</span>],
+            <span class="st">"temperature_c"</span>:   cw[<span class="st">"temperature"</span>],
+            <span class="st">"windspeed_kmh"</span>:   cw[<span class="st">"windspeed"</span>],
+            <span class="st">"wind_direction"</span>:  cw[<span class="st">"winddirection"</span>],
+            <span class="st">"weather_code"</span>:    cw[<span class="st">"weathercode"</span>],
+        }
+
+    <span class="op">@</span><span class="fn">task</span>()
+    <span class="kw">def</span> <span class="fn">load</span>(record: dict) -> <span class="nb">None</span>:
+        hook = <span class="fn">PostgresHook</span>(postgres_conn_id=<span class="st">"postgres_default"</span>)
+        hook.<span class="fn">run</span>(
+            <span class="st">"""
+            INSERT INTO weather_data
+              (timestamp, temperature_c, windspeed_kmh,
+               wind_direction, weather_code)
+            VALUES
+              (%(timestamp)s, %(temperature_c)s, %(windspeed_kmh)s,
+               %(wind_direction)s, %(weather_code)s)
+            ON CONFLICT (timestamp) DO NOTHING
+            """</span>,
+            parameters=record
+        )
+
+    <span class="cm"># XCom passing is implicit — return values flow as typed arguments</span>
+    raw  = <span class="fn">extract</span>()
+    rec  = <span class="fn">transform</span>(raw)
+    <span class="fn">load</span>(rec)
+
+<span class="fn">weather_etl</span>()</code></pre>
+
+    <h2 id="docker">Docker &amp; Container Setup</h2>
+    <p>The Astro CLI manages four services when you run <code>astro dev start</code>. Understanding each container's role is essential when debugging: a failed DAG run could be a scheduler issue, a database connectivity problem, or a Python dependency conflict — and the logs live in different containers.</p>
+
+    <div class="data-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Container</th><th>Role</th><th>Port</th><th>When to check</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>webserver</code></td><td>Airflow UI</td><td>8080</td><td>DAG visibility, task logs</td></tr>
+          <tr><td><code>scheduler</code></td><td>DAG orchestration &amp; trigger</td><td>—</td><td>DAG not running? Start here</td></tr>
+          <tr><td><code>postgres-db</code></td><td>Target database (custom name)</td><td>5432</td><td>Data not persisting</td></tr>
+          <tr><td><code>triggerer</code></td><td>Deferrable operators</td><td>—</td><td>Async sensor tasks</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>The PostgreSQL container is explicitly named <code>postgres-db</code> rather than the Astro default of <code>postgres</code>. This matters in development: when multiple Docker Compose projects are running, the default name collides. A custom name eliminates ambiguity and makes the <code>docker exec</code> commands unambiguous across projects.</p>
+
+    <div class="code-label">
+      <span>Dockerfile</span>
+      <span style="color:#EF9F27">Docker</span>
+    </div>
+    <pre><code><span class="cm"># Extends the official Astronomer Airflow image</span>
+FROM quay.io/astronomer/astro-runtime:8.8.0
+
+<span class="cm"># System packages for DAG dependencies (e.g. psycopg2-binary native build)</span>
+<span class="kw">RUN</span> apt-get update &amp;&amp; apt-get install -y --no-install-recommends curl libpq-dev</code></pre>
+
+    <h2 id="idempotency">Production Pattern: Idempotent Loads</h2>
+    <p>One gap in most ETL tutorials is idempotency. A simple <code>INSERT</code> is not safe to retry: if the DAG fails mid-run and retries, duplicate rows will accumulate silently. Production load tasks must be idempotent — running them twice produces the same result as running them once.</p>
+    <p>For time-series data, the correct pattern is a unique constraint on the natural key (<code>timestamp</code> in this case) combined with an <code>ON CONFLICT DO NOTHING</code> clause. This is shown in the DAG code above. It makes the load task safe to retry at any point in the execution window — a property Airflow's retry mechanism implicitly depends on.</p>
+
+    <h2 id="monitoring">Live Monitoring with dBeaver</h2>
+    <p>Once data is in Postgres, you need a way to inspect it that doesn't require CLI access. I connected dBeaver — a free, cross-platform SQL client — directly to the containerised database. For demos and stakeholder reviews, seeing rows appear in a GUI is far more convincing than tailing Docker logs.</p>
+
+    <div class="callout note">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M4.93 4.93a10 10 0 0 0 0 14.14"/></svg></span>
+      <div>
+        <strong>dBeaver connection settings:</strong><br/>
+        Host: <code>localhost</code> · Port: <code>5432</code> · Database: <code>postgres</code><br/>
+        Username: <code>postgres</code> · Password: <code>postgres</code>
+      </div>
+    </div>
+
+    <p>The monitoring query is trivial — but seeing it update on each hourly run makes the pipeline feel alive:</p>
+    <pre><code>SELECT timestamp, temperature_c, windspeed_kmh, weather_code
+FROM weather_data
+ORDER BY timestamp DESC
+LIMIT 24;  -- last 24 hours</code></pre>
+
+    <h2 id="commands">Useful CLI Commands</h2>
+
+    <div class="code-label">
+      <span>Terminal — dev commands</span>
+      <span style="color:#EF9F27">Shell</span>
+    </div>
+    <pre><code><span class="cm"># Start all containers</span>
+astro dev start
+
+<span class="cm"># Tail scheduler logs — most useful for debugging DAG parse errors</span>
+astro dev logs --scheduler
+
+<span class="cm"># Restart after requirements.txt or config changes</span>
+astro dev restart
+
+<span class="cm"># Query the DB directly for spot-checks</span>
+docker exec -it postgres-db psql -U postgres -c <span class="st">"SELECT count(*), max(timestamp) FROM weather_data;"</span>
+
+<span class="cm"># Check all container health at a glance</span>
+docker ps --format <span class="st">"table {{.Names}}\t{{.Status}}\t{{.Ports}}"</span>
+
+<span class="cm"># Manually trigger a specific task for debugging</span>
+astro dev run weather_etl_pipeline extract 2024-01-01</code></pre>
+
+    <h2 id="lessons">Three Engineering Lessons</h2>
+    <p>Building this against actual production patterns surfaced three things that tutorial setups consistently obscure:</p>
+
+    <p><strong>1. PostgresHook over raw psycopg2.</strong> Using Airflow's <code>PostgresHook</code> keeps credentials out of your DAG code entirely. The connection lives in Airflow's encrypted connections store, configured once in the UI or via an environment variable. Credential rotation never requires a DAG change — the operational discipline this enables is significant at scale, and it's the correct pattern for any secrets management in Airflow.</p>
+
+    <p><strong>2. TaskFlow API makes data flow explicit.</strong> The <code>@task</code> decorator model makes pipeline data flow visible through Python function signatures. Compare this to the old <code>PythonOperator(python_callable=fn)</code> approach, where XCom pushes and pulls happen via side-effect calls inside the task body — invisible, fragile, and hard to test. The TaskFlow model is composable, testable, and reads exactly like normal Python. It's the right pattern for any pipeline you expect to maintain long-term.</p>
+
+    <p><strong>3. <code>catchup=False</code> is not optional.</strong> Forget this on your first run and Airflow will attempt to backfill every scheduled interval from <code>start_date</code> to now — potentially hundreds of API calls in rapid succession. More critically, if your pipeline does anything stateful (database writes, notifications, downstream triggers), that flood will corrupt state in ways that are difficult to diagnose. Set <code>catchup=False</code> as a default on every DAG unless you have an explicit, idempotent backfill requirement.</p>
+
+    <div class="pull-quote">The discipline of treating ETL pipelines as <em>software</em> — with containers, connection stores, idempotent loads, and proper observability — pays off the first time you have to debug a production incident at 2am.</div>
+
+  </article>
+
+  <aside class="post-sidebar">
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Table of Contents</p>
+      <nav aria-label="Article sections">
+        <ul class="toc-nav">
+          <li><a href="#motivation">Beyond "Hello World"</a></li>
+          <li><a href="#stack">Technical stack</a></li>
+          <li><a href="#architecture">Pipeline architecture</a></li>
+          <li><a href="#dag">The DAG code</a></li>
+          <li><a href="#docker">Docker &amp; containers</a></li>
+          <li><a href="#monitoring">Live monitoring</a></li>
+          <li><a href="#commands">CLI commands</a></li>
+          <li><a href="#lessons">What I learned</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Project Links</p>
+      <div style="display:flex;flex-direction:column;gap:.6rem;">
+        <a href="https://github.com/arko-saha/Building-End-To-End-ETL-Pipeline-For-Weather-Monitoring-Using-AirFlow-And-Astro" target="_blank" rel="noopener" class="card-link mono">GitHub repo ↗</a>
+        <a href="index.html#projects" class="card-link mono">All projects ↗</a>
+      </div>
+    </div>
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Tags</p>
+      <div class="skills-cloud" style="margin-top:.5rem">
+        <span class="skill-tag">Apache Airflow</span>
+        <span class="skill-tag">Docker</span>
+        <span class="skill-tag">PostgreSQL</span>
+        <span class="skill-tag">ETL</span>
+        <span class="skill-tag">MLOps</span>
+        <span class="skill-tag">Astronomer</span>
+      </div>
+    </div>
+    <div class="recruiter-cta" style="margin-top:1.25rem">
+      <p class="recruiter-cta-title">FlameFactory</p>
+      <p class="recruiter-cta-sub">Founder &amp; CEO building AI-first products at FlameFactory. Open to strategic partnerships and investment conversations.</p>
+      <a href="mailto:arkosaha.ruet@gmail.com" class="btn">Get in Touch ↗</a>
+    </div>
+  </aside>
+</div>
+
+<div class="container">
+  <div class="post-footer">
+    <p class="post-footer-label">Continue reading</p>
+    <div class="post-nav-grid">
+      <a href="post-brain-tumour-detection.html" class="post-nav-card">
+        <span class="pnc-dir">← Previous</span>
+        <span class="pnc-title">NeuroScan AI: Deep Learning for Brain Tumour Classification from MRI Scans</span>
+      </a>
+      <a href="post-cricket-analytics.html" class="post-nav-card">
+        <span class="pnc-dir">Next →</span>
+        <span class="pnc-title">Beyond Instinct: Data-Driven T20 Cricket Projections</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer class="footer" role="contentinfo">
+  <div class="container footer-inner">
+    <p class="mono footer-copy">© 2026 Arko Saha · <a href="index.html">Portfolio</a> · <a href="blog.html">Blog</a></p>
+    <p class="mono footer-right">London, UK · Founder &amp; CEO, FlameFactory</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+<script>
+const tocLinks = document.querySelectorAll('.toc-nav a');
+const headings = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+function updateToc() {
+  let active = '';
+  headings.forEach(h => { if (window.scrollY >= h.offsetTop - 120) active = h.id; });
+  tocLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + active); });
+}
+window.addEventListener('scroll', updateToc, { passive: true });
+updateToc();
+</script>
+</body>
+</html>

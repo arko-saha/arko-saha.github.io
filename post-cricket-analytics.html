@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Beyond Instinct: Data-Driven T20 Cricket Analytics — Arko Saha</title>
+<meta name="description" content="How I built a full T20 cricket analytics framework for my MSc dissertation — novel KPIs, a deep neural network trained on 400k deliveries, and an interactive Tableau dashboard for coaches and scouts." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="post-style.css" />
+<style>
+/* ─── Page-specific layouts ─── */
+.kpi-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0;
+}
+.kpi-card {
+  background: var(--bg-1); border: 1px solid var(--bg-3);
+  border-radius: var(--r-sm); padding: 1.1rem 1.2rem;
+}
+.kpi-name {
+  font-family: var(--font-mono); font-size: .72rem; letter-spacing: .05em;
+  color: var(--forest); font-weight: 500; margin-bottom: .35rem;
+}
+.kpi-formula {
+  font-family: var(--font-mono); font-size: .75rem;
+  color: var(--sienna); background: rgba(192,75,34,.06);
+  padding: .3rem .6rem; border-radius: 3px; margin-bottom: .5rem;
+  display: inline-block;
+}
+.kpi-desc { font-size: .86rem; color: var(--text-2); line-height: 1.5; }
+
+.arch-diagram {
+  background: var(--bg-1); border: 1px solid var(--bg-3);
+  border-radius: var(--r-sm); padding: 1.5rem; margin: 1.5rem 0;
+  overflow-x: auto;
+}
+.arch-row {
+  display: flex; align-items: center; gap: .6rem;
+  font-family: var(--font-mono); font-size: .8rem; margin-bottom: .6rem;
+}
+.arch-row:last-child { margin-bottom: 0; }
+.arch-box {
+  padding: .3rem .7rem; border-radius: 3px; font-size: .72rem;
+  white-space: nowrap; flex-shrink: 0;
+  border: 1px solid;
+}
+.arch-box.source  { background: rgba(46,109,164,.1);  color: var(--sky);    border-color: rgba(46,109,164,.25); }
+.arch-box.process { background: rgba(29,122,95,.1);   color: var(--forest); border-color: rgba(29,122,95,.25); }
+.arch-box.output  { background: rgba(192,75,34,.1);   color: var(--sienna); border-color: rgba(192,75,34,.25); }
+.arch-box.model   { background: rgba(239,159,39,.1);  color: #b07014;       border-color: rgba(239,159,39,.3); }
+.arch-arrow { color: var(--text-2); }
+</style>
+</head>
+<body>
+<div class="cursor-glow" id="cursorGlow"></div>
+<div class="grid-overlay" aria-hidden="true"></div>
+
+<!-- ─── Nav ─── -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo" aria-label="Home"><span class="nav-logo-monogram">AS</span></a>
+    <ul class="nav-links" role="list">
+      <li><a href="index.html#about"    class="nav-link" data-index="01">About</a></li>
+      <li><a href="index.html#projects" class="nav-link" data-index="05">Projects</a></li>
+      <li><a href="index.html#contact"  class="nav-link" data-index="07">Contact</a></li>
+      <li><a href="blog.html"           class="nav-link" data-index="08" style="color:var(--forest)">Blog</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main-content">
+
+<!-- ─── Hero ─── -->
+<header class="post-hero">
+  <div class="container">
+    <a href="blog.html" class="post-back">← Back to Blog</a>
+    <div class="post-tags-row">
+      <span class="blog-tag">MSc Dissertation</span>
+      <span class="blog-tag" style="background:rgba(192,75,34,.08);color:var(--sienna);border-color:rgba(192,75,34,.2);">Sports Analytics</span>
+      <span class="blog-tag" style="background:rgba(46,109,164,.08);color:var(--sky);border-color:rgba(46,109,164,.2);">Machine Learning</span>
+      <span class="blog-tag" style="background:rgba(239,159,39,.08);color:#b07014;border-color:rgba(239,159,39,.3);">Deep Learning</span>
+    </div>
+    <h1 class="post-title">Beyond Instinct:<em> Data-Driven T20 Cricket Projections</em></h1>
+    <p class="post-subtitle">Cricket analytics lags a decade behind baseball. For my MSc dissertation I built the framework that closes the gap — novel KPIs adapted from Sabermetrics, a deep neural network trained on 400k+ deliveries, and an interactive Tableau dashboard for coaches and scouts. Here's the full architecture.</p>
+    <div class="post-meta-bar">
+      <div class="post-meta-avatar" aria-hidden="true">AS</div>
+      <div>
+        <p class="post-meta-name">Arko Saha</p>
+        <p class="post-meta-detail">Founder &amp; CEO, FlameFactory · London</p>
+      </div>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">September 2023</span>
+      <span class="post-meta-sep">·</span>
+      <span class="post-meta-detail">12 min read</span>
+      <span class="post-meta-sep">·</span>
+      <a href="https://github.com/arko-saha/Beyond-Instinct-Data-driven-Cricket-Projection" target="_blank" rel="noopener" class="card-link mono" style="font-size:.75rem">GitHub ↗</a>
+    </div>
+  </div>
+</header>
+
+<!-- ─── Body + Sidebar ─── -->
+<div class="post-layout">
+  <article class="post-body" id="post-body">
+
+    <!-- 1. Motivation -->
+    <h2 id="motivation">The Gap Between Gut Feel and Evidence</h2>
+    <p>Cricket has always had room for instinct. For most of the sport's history, player selection, team composition, and in-game tactics were built on expertise, experience, and judgement — and that tradition runs deep. But T20 cricket now generates enormous volumes of granular data: ball-by-ball records, player statistics across formats and conditions, partnership data, phase-specific bowling figures.</p>
+    <p>This research was completed as my <strong>MSc in Data Science Dissertation</strong> at the <strong>University of Roehampton, London, UK</strong> (submitted September 2023) under the supervision of <strong>Kimia Aksir</strong>. The question this dissertation asked is whether that data can be made to work harder than it currently does. Specifically: can we build a framework that puts better evidence in the hands of coaches, scouts, and analysts — not to replace cricket knowledge, but to sharpen it?</p>
+    <p>The practical stakes are real. IPL franchise owners and national selectors spend significant money on player investments and make selection decisions that determine careers — often with inadequate analytical support. This project tries to give them a better toolkit, built entirely from publicly available data.</p>
+
+    <div class="metric-row">
+      <div class="metric-card"><span class="m-value">400k+</span><span class="m-label">Deliveries ingested</span></div>
+      <div class="metric-card"><span class="m-value">2,891</span><span class="m-label">T20 matches analysed</span></div>
+      <div class="metric-card"><span class="m-value">99.5%</span><span class="m-label">Neural net accuracy</span></div>
+      <div class="metric-card"><span class="m-value">5</span><span class="m-label">Novel KPIs designed</span></div>
+    </div>
+
+    <!-- 2. Problem -->
+    <h2 id="problem">Four Problems Cricket Analytics Hasn't Solved</h2>
+    <p>Cricket analytics isn't behind for lack of data — it's behind because the culture has been slow to demand analytical rigour, and because the existing metrics were never designed for the T20 format. The dissertation addresses four specific gaps:</p>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-name">01 — Broken metrics</div>
+        <div class="kpi-desc">Batting average, economy rate, and strike rate were designed for Test cricket. A batsman scoring 40 off 20 in a losing cause looks identical to the same innings in a chase win. There's no T20-calibrated evaluation framework in common use.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-name">02 — Hard forecasting</div>
+        <div class="kpi-desc">Predicting future performance from historical data is genuinely difficult. Performance is multi-dimensional, form fluctuates, and without composite indicators, most attempts reduce to extrapolating raw averages.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-name">03 — Unusable outputs</div>
+        <div class="kpi-desc">Even where good analysis exists, it rarely reaches decision-makers in a usable form. The gap between analytical output and actionable guidance for coaches is wide.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-name">04 — Untapped deep learning</div>
+        <div class="kpi-desc">Deep learning has not been seriously applied to ball-by-ball prediction in T20 cricket. The granularity of the data makes it well-suited for sequence modelling — but this remains underdeveloped in the literature.</div>
+      </div>
+    </div>
+
+    <!-- 3. Data -->
+    <h2 id="data">Data Acquisition: Two Sources, Never Designed to Join</h2>
+    <p>The dataset is assembled from two open repositories covering January 2022 to August 2023 for predictive modelling, with a broader six-year historical window for exploratory analysis.</p>
+    <p><strong>Cricsheet</strong> provided ball-by-ball CSV records for 2,891 T20 international matches — batter, bowler, runs scored, wicket type, and fielding events. Clean, structured, but limited on player metadata.</p>
+    <p><strong>ESPN Cricinfo</strong> was scraped via Python and BeautifulSoup to obtain match-by-match, position-wise, and aggregate batting and bowling statistics. Rich context, but buried in HTML tables with no API and a schema that changes between eras.</p>
+
+    <div class="callout warn">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+      <div>ESPN Cricinfo's HTML tables change structure between eras and have no official API. The scraper implements a <strong>1.5-second rate delay</strong> and a retry/backoff mechanism. Always rate-limit scraping — it's both polite and protects against IP bans.</div>
+    </div>
+
+    <div class="code-label">
+      <span>data acquisition — ESPNcricinfo scraper (simplified)</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">import</span> requests, time
+<span class="kw">from</span> bs4 <span class="kw">import</span> BeautifulSoup
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="kw">def</span> <span class="fn">scrape_batting_stats</span>(base_url: str, pages: int, delay: float = <span class="nb">1.5</span>):
+    <span class="cm">"""Paginated scraper with rate limiting for ESPNcricinfo batting tables."""</span>
+    all_rows = []
+    <span class="kw">for</span> page <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, pages + <span class="nb">1</span>):
+        url = <span class="fn">f</span><span class="st">"{base_url};page={page}"</span>
+        time.<span class="fn">sleep</span>(delay)                          <span class="cm"># respect rate limits</span>
+        soup = BeautifulSoup(
+            requests.<span class="fn">get</span>(url).<span class="fn">text</span>, <span class="st">"html.parser"</span>
+        )
+        table = soup.<span class="fn">find</span>(<span class="st">"table"</span>, {<span class="st">"class"</span>: <span class="st">"engineTable"</span>})
+        <span class="kw">if not</span> table:
+            <span class="kw">break</span>
+        rows = table.<span class="fn">find_all</span>(<span class="st">"tr"</span>, {<span class="st">"class"</span>: <span class="st">"data1"</span>})
+        all_rows.<span class="fn">extend</span>(
+            [td.<span class="fn">get_text</span>(strip=<span class="kw">True</span>) <span class="kw">for</span> td <span class="kw">in</span> row.<span class="fn">find_all</span>(<span class="st">"td"</span>)]
+            <span class="kw">for</span> row <span class="kw">in</span> rows
+        )
+    <span class="kw">return</span> pd.<span class="fn">DataFrame</span>(all_rows, columns=[
+        <span class="st">"player"</span>, <span class="st">"country"</span>, <span class="st">"matches"</span>, <span class="st">"innings"</span>, <span class="st">"not_outs"</span>,
+        <span class="st">"runs"</span>, <span class="st">"high_score"</span>, <span class="st">"average"</span>, <span class="st">"balls_faced"</span>,
+        <span class="st">"strike_rate"</span>, <span class="st">"centuries"</span>, <span class="st">"fifties"</span>
+    ])</code></pre>
+
+    <!-- 4. Preprocessing -->
+    <h2 id="preprocessing">Preprocessing Pipeline</h2>
+    <p>Raw Cricsheet CSV → analysis-ready feature matrix is a five-step transformation. Each step is a dedicated module, making the pipeline testable and composable:</p>
+
+    <ol class="steps">
+      <li>
+        <div><strong>Schema normalisation</strong> — Cricsheet changed its column naming convention in 2020 (<code>batter</code> → <code>striker</code>, <code>player_out</code> → <code>player_dismissed</code>). The loader handles both historical and modern schema automatically, ensuring full dataset coverage without manual renaming.</div>
+      </li>
+      <li>
+        <div><strong>Ball parsing</strong> — Deliveries are encoded as decimals: <code>3.4</code> = 4th ball of over 3. This step splits the decimal into two integer columns: <code>completed_over</code> and <code>ball_no</code>, which are far more useful as model features and for match-state indexing.</div>
+      </li>
+      <li>
+        <div><strong>Cleaning</strong> — Super-over deliveries are removed (they skew phase statistics), trailing null rows are dropped, and a binary <code>fall_of_wicket</code> indicator is derived from the wicket text column. Numerical features are normalised with <code>StandardScaler</code>; categoricals are label-encoded.</div>
+      </li>
+      <li>
+        <div><strong>KPI computation</strong> — The derived metrics (Batting Impact, Bowling Score, Run Expectancy, Wicket Expectancy, Dismissal Factor) are computed from the cleaned delivery-level data and joined back as match-level and player-level aggregates.</div>
+      </li>
+      <li>
+        <div><strong>Feature engineering</strong> — In-match dynamics features (CRR, RRR, Run Momentum, Performance Index) are computed per-delivery. Rolling 10-match form windows are added for both batter and bowler.</div>
+      </li>
+    </ol>
+
+    <div class="code-label">
+      <span>preprocessing — in-match dynamics features</span>
+      <span style="color:#1D9E75">Python</span>
+    </div>
+    <pre><code><span class="kw">def</span> <span class="fn">add_match_dynamics</span>(df: pd.DataFrame) -> pd.DataFrame:
+    <span class="cm">"""
+    Compute delivery-level in-match state features.
+    Adopted from Ganesh (2022) Performance Index formulation.
+    """</span>
+    <span class="cm"># Current Run Rate: cumulative runs / current ball number</span>
+    df[<span class="st">"CRR"</span>] = (df[<span class="st">"cumulative_runs"</span>] / df[<span class="st">"ball_number"</span>]) * <span class="nb">6</span>
+
+    <span class="cm"># Required Run Rate: remaining runs / remaining balls (2nd innings only)</span>
+    df[<span class="st">"RRR"</span>] = df.<span class="fn">apply</span>(
+        <span class="kw">lambda</span> r: ((r[<span class="st">"target"</span>] - r[<span class="st">"cumulative_runs"</span>]) /
+                    (r[<span class="st">"balls_remaining"</span>] / <span class="nb">6</span>))
+                   <span class="kw">if</span> r[<span class="st">"innings"</span>] == <span class="nb">2</span> <span class="kw">else</span> <span class="nb">0</span>, axis=<span class="nb">1</span>
+    )
+
+    <span class="cm"># Run Momentum: wicket pressure on remaining batters</span>
+    df[<span class="st">"run_momentum"</span>] = (
+        (<span class="nb">11</span> - df[<span class="st">"cumulative_wickets"</span>]) / df[<span class="st">"balls_remaining"</span>].clip(<span class="nb">1</span>)
+    )
+
+    <span class="cm"># Performance Index synthesises rate + wickets in hand</span>
+    df[<span class="st">"performance_index"</span>] = df[<span class="st">"CRR"</span>] * (<span class="nb">10</span> - df[<span class="st">"cumulative_wickets"</span>])
+    <span class="kw">return</span> df</code></pre>
+
+    <!-- 5. KPIs -->
+    <h2 id="kpis">The KPI Framework: Adapted from Sabermetrics</h2>
+    <p>The most distinctive part of this research was building a KPI framework that actually means something in a T20 context. Standard metrics like batting average and economy rate were never designed for this format. The framework draws on Muzaffer's Performance Impact methodology and extends it with contributions from four additional researchers.</p>
+
+    <div class="pull-quote">A batsman who scores 40 off 20 in a losing cause looks identical to one who scores the same in a winning chase. Context-aware metrics fix this.</div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-name">Batting Impact</div>
+        <div class="kpi-formula">Impact = (Quality × Frequency) + Hundred_factor + Fifties_factor + Zeroes_factor</div>
+        <div class="kpi-desc">Adapted from Muzaffer (2016). Quality = Strike Rate × Average measured against T20 benchmarks (SR &ge; 130, Average &ge; 30). Frequency = Balls Faced / Innings. Milestone factors (Centuries, Fifties, and Ducks divided by Innings) scale with consistency, acting as rewards or penalties based on frequency.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-name">Bowling Score</div>
+        <div class="kpi-formula">Score = Quality × Frequency + (Impact × Maiden_ratio)</div>
+        <div class="kpi-desc">Adapted and extended from Muzaffer (2016). Quality = Benchmark / (Economy × Strike Rate), with T20 benchmarks of SR &le; 12, Economy &le; 8 rpo. The study's novel addition is the <strong>(Impact × Maiden_ratio)</strong> term, which explicitly captures a bowler's discipline.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-name">Run Expectancy</div>
+        <div class="kpi-formula">RE = E[Runs | Overs_Completed, Wickets_Fallen]</div>
+        <div class="kpi-desc">Adopted from Nielsen (2019). Runs are valued contextually through a 2D match-state matrix rather than raw aggregates. A run scored with 9 wickets in hand in the powerplay is weighted differently from a run scored in the 18th over with 3 wickets remaining.</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-name">Dismissal Factor</div>
+        <div class="kpi-formula">DF = Actual_Wickets − Expected_Wickets_Situational</div>
+        <div class="kpi-desc">Original construction built on Date's (2022) delivery-level wicket probability matrix. It measures situational wicket-taking relative to historical probabilities. Bowlers taking wickets at low-probability moments are highlighted as premium assets.</div>
+      </div>
+    </div>
+
+    <h3>In-Match Dynamics Metrics</h3>
+    <p>To capture the evolving state of a T20 match as a continuous sequence rather than static aggregates, the feature pipeline incorporates three dynamics metrics adapted from Ganesh (2022):</p>
+    <ul>
+      <li><strong>Run Rate (RR):</strong> Calculated as <code>cumulative_runs / ball_number</code> in the first innings, and <code>required_runs / balls_remaining</code> in the second innings.</li>
+      <li><strong>Run Momentum (RM):</strong> Captures the wicket pressure on the remaining batting lineup: <code>(11 − cumulative_wickets) / balls_remaining</code>.</li>
+      <li><strong>Performance Index (PI):</strong> Synthesises run rate pressure and resource depth: <code>Run_Rate × (10 − cumulative_wickets)</code>.</li>
+    </ul>
+
+    <p>Players were classified into six tactical roles — upper-, middle-, and lower-order batters, and powerplay, middle-over, and slog-over bowlers — grounded in game knowledge and expert convention. Fielding statistics were deliberately excluded from the scope to maintain analytical coherence rather than risk producing a composite metric that mixed incommensurable performance dimensions.</p>
+
+    <!-- 6. Models -->
+    <h2 id="models">Predictive Modelling: Two Tasks, Two Architectures</h2>
+
+    <h3>Batting Performance Prediction</h3>
+    <p>Three regression algorithms were trained on ESPNcricinfo-derived batting data. Feature selection was conducted systematically using a correlation heatmap analysis, which confirmed extremely strong relationships between runs and balls faced, fours, sixes, and strike rate. In contrast, venue and opposition features showed no meaningful correlation with individual batting scores and were explicitly excluded to prevent noise and overfitting.</p>
+
+    <div class="data-table-wrap">
+      <table>
+        <thead>
+          <tr><th>Model</th><th>R²</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Decision Tree Regressor</td><td>0.9896</td><td>Baseline; prone to overfitting on small samples</td></tr>
+          <tr><td>Random Forest Regressor</td><td>0.9985</td><td>Robust generalisation; used in (Deep Prakash &amp; Verma, 2022)</td></tr>
+          <tr class="highlight"><td><strong>Polynomial Regression (degree 3)</strong></td><td><strong>0.9999999992</strong></td><td>Best fit; reflects near-deterministic encoding of runs in constituent inputs</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></span>
+      <div>An R² of 0.9999999992 deserves scrutiny. The structural explanation is that match-level runs are near-deterministically encoded in their inputs — balls faced, boundaries, and strike rate — leaving minimal unexplained variance by design. This is a property of the data domain rather than model magic, though overfitting cannot be entirely ruled out without validation on genuinely out-of-distribution data. Future work should test against held-out future seasons, ODI/Test formats, or unseen player cohorts to assess generalisation more rigorously.</div>
+    </div>
+
+    <h3>Next-Ball Outcome Prediction: Deep Neural Network</h3>
+    <p>The more novel contribution is a five-layer deep neural network trained to classify the outcome of each delivery across seven possible classes. The architecture takes a 12-dimensional feature vector as input:</p>
+
+    <div class="code-label">
+      <span>model architecture — next-ball DNN</span>
+      <span style="color:#1D9E75">Python / TensorFlow</span>
+    </div>
+    <pre><code><span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow.keras <span class="kw">import</span> layers
+
+<span class="cm"># 12-dimensional input: over, ball_no, cumulative_runs, cumulative_wickets,
+# batting_team, bowling_team, CRR, RRR, run_momentum, performance_index,
+# batter_form_sr, bowler_form_eco</span>
+
+model = tf.keras.<span class="fn">Sequential</span>([
+    layers.<span class="fn">Flatten</span>(input_shape=(<span class="nb">12</span>,)),
+    layers.<span class="fn">Dense</span>(<span class="nb">128</span>, activation=<span class="st">"relu"</span>),
+    layers.<span class="fn">Dense</span>(<span class="nb">64</span>,  activation=<span class="st">"relu"</span>),
+    layers.<span class="fn">Dense</span>(<span class="nb">32</span>,  activation=<span class="st">"relu"</span>),
+    layers.<span class="fn">Dense</span>(<span class="nb">16</span>,  activation=<span class="st">"relu"</span>),
+    layers.<span class="fn">Dense</span>(<span class="nb">10</span>,  activation=<span class="st">"sigmoid"</span>),  <span class="cm"># 7-class output</span>
+])
+
+model.<span class="fn">compile</span>(
+    optimizer=<span class="st">"adam"</span>,
+    loss=<span class="st">"sparse_categorical_crossentropy"</span>,
+    metrics=[<span class="st">"sparse_categorical_accuracy"</span>]
+)
+
+<span class="cm"># Training on 400,000+ deliveries (2,891 T20 matches)</span>
+<span class="cm"># Test accuracy: 99.50% | Test loss: 0.127</span></code></pre>
+
+    <p>The model was trained on over 400,000 data points drawn from 2,891 T20 matches. On a held-out test set it achieved <strong>99.50% accuracy</strong> with a test loss of 0.127. No prior work reviewed in this dissertation deployed a deep neural network specifically for granular delivery-by-delivery outcome prediction in T20 cricket.</p>
+
+    <!-- 7. Pipeline -->
+    <h2 id="pipeline">End-to-End Pipeline Architecture</h2>
+    <p>The research is structured as a reproducible, pipeline-driven system with five sequential phases managed through an Agile workflow:</p>
+
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <span class="arch-box source">Cricsheet (2,891 matches)</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box process">Loader + Schema normalisation</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box process">Ball parser + Cleaner</span>
+      </div>
+      <div class="arch-row">
+        <span class="arch-box source">ESPNcricinfo (scraped)</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box process">BeautifulSoup scraper</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box process">Player stat aggregator</span>
+      </div>
+      <div class="arch-row">
+        <span class="arch-box process">Feature engineering</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box process">KPI computation (5 metrics)</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box process">Player clustering (K-NN)</span>
+      </div>
+      <div class="arch-row">
+        <span class="arch-box model">DNN classifier (next-ball)</span>
+        <span class="arch-arrow">+</span>
+        <span class="arch-box model">Polynomial Regression (batting)</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box output">Tableau Dashboard</span>
+      </div>
+    </div>
+
+    <p>Agile project management was conducted in Notion with iterative development cycles enabling continuous refinement of models and dashboard components. The multi-page Tableau dashboard differs from standard reporting tools in that it integrates <strong>K-NN clustering</strong> (contrasting with the <strong>K-Means</strong> approach deployed by Deep Prakash & Verma, 2022), enabling dynamic, role-based segmentation without requiring supervised labels. It combines player performance forecasting, partnership chemistry metrics, phase-specific bowling breakdowns, and interactive player comparisons in a single decision-ready environment built for coaches, scouts, and selectors.</p>
+
+    <!-- 8. EDA Findings -->
+    <h2 id="eda">Key Analytical Findings</h2>
+    <p>Exploratory data analysis conducted across the full six-year dataset surfaced several findings not previously quantified at this scale:</p>
+
+    <div class="callout info">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+      <div><strong>Boundary reliance vs. rotation:</strong> Stronger batting nations (India, South Africa) rely disproportionately on boundaries — low rotation percentages. Structurally weaker teams exhibit higher rotation rates. This has direct implications for opposition analysis: bowling plans should differ based on the opponent's scoring archetype, not just their aggregate run rate.</div>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+      <div><strong>Batting Impact discriminates where averages don't:</strong> Tableau-based clustering confirmed that Batting Impact and Bowling Score successfully separate high-potential players and undervalued talents across national teams — cases where standard career aggregates assigned them identical or misleading rankings.</div>
+    </div>
+
+    <div class="callout info">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+      <div><strong>Phase-specific bowling economy diverges from overall figures:</strong> A bowler's aggregate economy rate frequently masked opposite profiles in powerplay vs. death overs. The phase-segmented Bowling Score reveals which bowlers are genuinely versatile and which are specialists being misdeployed.</div>
+    </div>
+
+    <!-- 9. Evaluation -->
+    <h2 id="evaluation">Critical Evaluation</h2>
+
+    <h3>What this does well</h3>
+    <p>The framework is reproducible end-to-end — from raw public data through to stakeholder-facing dashboard — with no proprietary inputs. The multi-algorithm comparison with systematic hyperparameter tuning (grid search across all three regression models) is a methodologically meaningful contribution: the finding that Random Forest is <em>insufficient</em> — widely used in comparable prior work — is as useful as the polynomial regression result itself. The DNN result on a genuinely large dataset (400k+ records) is competitive with the state of the art for ball-by-ball cricket prediction.</p>
+
+    <h3>Scope boundaries and honest limitations</h3>
+    <p>Three boundaries are worth being explicit about:</p>
+
+    <div class="callout alert">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+      <div><strong>Polynomial regression R²:</strong> The near-perfect R² reflects structural data properties (runs are near-deterministically encoded in balls faced + boundaries) rather than model generalisation. Validation against held-out future seasons, different formats, or unseen player cohorts is essential before treating this as a deployable predictor.</div>
+    </div>
+    <div class="callout alert">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+      <div><strong>No proprietary tracking data:</strong> Ball speed, release point, pitch map coordinates, and impact timing from Hawk-Eye are outside scope. Their inclusion would substantially enrich the KPI framework and bring the pipeline closer to commercially deployed analytics systems.</div>
+    </div>
+    <div class="callout alert">
+      <span class="callout-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+      <div><strong>Fielding excluded:</strong> Comprehensive player valuation for T20 franchise contexts — where fielding directly influences match outcomes — would require a dedicated fielding impact model as a parallel component.</div>
+    </div>
+
+    <!-- 10. Future -->
+    <h2 id="future">Future Directions</h2>
+    <p>Five clear extensions emerge from this work:</p>
+    <ol class="steps">
+      <li>
+        <div>
+          <strong>Transformer architectures for next-ball prediction</strong>
+          <p style="margin-top: 4px; font-size: 0.94rem; color: var(--text-2); line-height: 1.6;">The temporal structure of ball-by-ball sequences is exactly what attention mechanisms are designed for. A transformer trained on the same 400k-delivery corpus would likely outperform the current dense DNN substantially.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Real-time analytics pipeline</strong>
+          <p style="margin-top: 4px; font-size: 0.94rem; color: var(--text-2); line-height: 1.6;">Transition to live in-game deployment requires a real-time feature engineering layer, sub-second inference infrastructure, and integration with a live data feed. The engineering challenges are well-defined and addressable.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Proprietary tracking data integration</strong>
+          <p style="margin-top: 4px; font-size: 0.94rem; color: var(--text-2); line-height: 1.6;">Hawk-Eye coordinates, ball speed, and release point would enrich every component of the KPI framework.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Multi-format extension</strong>
+          <p style="margin-top: 4px; font-size: 0.94rem; color: var(--text-2); line-height: 1.6;">Format-specific KPI calibration for ODI and Test cricket, where the benchmark parameters (SR 130, average 30) differ substantially.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>Prospective validation with practitioners</strong>
+          <p style="margin-top: 4px; font-size: 0.94rem; color: var(--text-2); line-height: 1.6;">Collaboration with a cricket board or franchise analytics team to validate player evaluation recommendations against actual selection outcomes.</p>
+        </div>
+      </li>
+    </ol>
+
+    <hr class="section-divider" />
+
+    <!-- 11. Reproducibility -->
+    <h2 id="reproducibility">Reproducibility and Tools</h2>
+    <p>All data used in this research is publicly available. The implementation uses Python (NumPy, Pandas, Scikit-learn, Seaborn, Matplotlib, TensorFlow/Keras) for data processing, feature engineering, and modelling. Tableau Desktop was used for dashboard development and K-NN clustering. Microsoft Excel (DAX, pivot tables, Power Query) supported intermediate validation and KPI computation.</p>
+
+    <div class="code-label">
+      <span>environment — dependencies</span>
+      <span style="color:#EF9F27">Shell</span>
+    </div>
+    <pre><code><span class="cm"># Core data stack</span>
+pip install numpy pandas scikit-learn
+<span class="cm"># ML and deep learning</span>
+pip install tensorflow xgboost
+<span class="cm"># Web scraping</span>
+pip install requests beautifulsoup4 lxml
+<span class="cm"># Visualisation</span>
+pip install matplotlib seaborn
+<span class="cm"># Data sources</span>
+<span class="cm"># - Cricsheet: https://cricsheet.org/downloads/</span>
+<span class="cm"># - ESPNcricinfo: scraped via src/scraper/ (see GitHub)</span></code></pre>
+
+    <p>The full source code is publicly available on <a href="https://github.com/arko-saha/Beyond-Instinct-Data-driven-Cricket-Projection" target="_blank" rel="noopener">GitHub</a>. All datasets are archived in Google Drive. The interactive Tableau dashboard is accessible on Tableau Public.</p>
+
+    <h2 id="reflection">Lessons Beyond Cricket</h2>
+    <p>The most transferable lesson from this project has nothing to do with cricket. It's about what happens when you take a domain that has historically resisted quantification and apply a structured, evidence-first methodology to it. The resistance is real — sports domains have deep cultural investment in expert judgement, and data-driven approaches are seen as threatening rather than complementary. Getting adoption requires framing: not "the data says you're wrong," but "the data gives you a second opinion you didn't have before."</p>
+    <p>This is a pattern that recurs in every domain where AI is being applied. Clinical AI faces the same dynamic. Financial risk models face regulatory versions of it. The Batting Impact Score and Bowling Score in this project are designed to be <em>legible</em> to coaches — not to replace their judgement, but to surface evidence that either confirms or challenges it. That principle of legibility-first AI design is something I carry directly into FlameFactory's product philosophy.</p>
+    <p>The second transferable lesson is about the data pipeline problem. Roughly 60% of the project's technical effort went into data acquisition, cleaning, and harmonisation — before any modelling began. The models themselves were the straightforward part. If there's a meta-takeaway from any serious data project, it's this: the infrastructure beneath the model is always the harder problem, and almost always the more valuable one to solve well.</p>
+
+    <div class="pull-quote">Sports analytics is a mirror for every AI application domain: the hard problem isn't the model — it's building the evidence base that makes the model trustworthy enough for practitioners to act on.</div>
+
+  </article>
+
+  <!-- ─── Sidebar ─── -->
+  <aside class="post-sidebar">
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Table of Contents</p>
+      <nav aria-label="Article sections">
+        <ul class="toc-nav">
+          <li><a href="#motivation">The gap between gut and evidence</a></li>
+          <li><a href="#problem">Four unsolved problems</a></li>
+          <li><a href="#data">Data acquisition</a></li>
+          <li><a href="#preprocessing">Preprocessing pipeline</a></li>
+          <li><a href="#kpis">KPI framework</a></li>
+          <li><a href="#models">Predictive models</a></li>
+          <li><a href="#pipeline">End-to-end architecture</a></li>
+          <li><a href="#eda">Key findings</a></li>
+          <li><a href="#evaluation">Critical evaluation</a></li>
+          <li><a href="#future">Future directions</a></li>
+          <li><a href="#reproducibility">Reproducibility</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Project Links</p>
+      <div style="display:flex;flex-direction:column;gap:.6rem;">
+        <a href="https://github.com/arko-saha/Beyond-Instinct-Data-driven-Cricket-Projection" target="_blank" rel="noopener" class="card-link mono">GitHub repo ↗</a>
+        <a href="https://cricsheet.org" target="_blank" rel="noopener" class="card-link mono">Cricsheet.org ↗</a>
+        <a href="https://www.espncricinfo.com" target="_blank" rel="noopener" class="card-link mono">ESPNcricinfo ↗</a>
+        <a href="index.html#projects" class="card-link mono">All projects ↗</a>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">At a Glance</p>
+      <div style="display:flex;flex-direction:column;gap:.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">Institution</span>
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--ink)">Univ. of Roehampton</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">Programme</span>
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--ink)">MSc Data Science</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">Submitted</span>
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--ink)">September 2023</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">DNN accuracy</span>
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--forest);font-weight:500">99.50%</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted)">Best R²</span>
+          <span style="font-family:var(--mono);font-size:.7rem;color:var(--forest);font-weight:500">0.9999</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <p class="sidebar-card-title">Tags</p>
+      <div class="skills-cloud" style="margin-top:.5rem">
+        <span class="skill-tag">T20 Cricket</span>
+        <span class="skill-tag">Sabermetrics</span>
+        <span class="skill-tag">Deep Learning</span>
+        <span class="skill-tag">TensorFlow</span>
+        <span class="skill-tag">Scikit-learn</span>
+        <span class="skill-tag">Tableau</span>
+        <span class="skill-tag">Web Scraping</span>
+        <span class="skill-tag">Feature Engineering</span>
+        <span class="skill-tag">KPI Design</span>
+        <span class="skill-tag">Python</span>
+      </div>
+    </div>
+
+    <div class="recruiter-cta" style="margin-top:.5rem">
+      <p class="recruiter-cta-title">FlameFactory</p>
+      <p class="recruiter-cta-sub">Founder &amp; CEO building AI-first products at FlameFactory. Open to strategic partnerships and investment conversations.</p>
+      <a href="mailto:arkosaha.ruet@gmail.com" class="btn">Get in Touch ↗</a>
+    </div>
+  </aside>
+</div>
+
+<!-- ─── Post nav ─── -->
+<div class="container">
+  <div class="post-footer">
+    <p class="post-footer-label">Continue reading</p>
+    <div class="post-nav-grid">
+      <a href="post-airflow-docker.html" class="post-nav-card">
+        <span class="pnc-dir">← Previous</span>
+        <span class="pnc-title">Containerising Apache Airflow with Astro: A Production-Ready Weather ETL</span>
+      </a>
+      <a href="post-federated-learning.html" class="post-nav-card">
+        <span class="pnc-dir">Next →</span>
+        <span class="pnc-title">Building a Federated Learning System for ICU Sepsis Prediction: Lessons from MIMIC-III</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer class="footer" role="contentinfo">
+  <div class="container footer-inner">
+    <p class="mono footer-copy">© 2026 Arko Saha · <a href="index.html">Portfolio</a> · <a href="blog.html">Blog</a></p>
+    <p class="mono footer-right">London, UK · Founder &amp; CEO, FlameFactory</p>
+  </div>
+</footer>
+
+<script>
+/* Cursor glow */
+const glow = document.getElementById('cursorGlow');
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top  = e.clientY + 'px';
+});
+
+/* TOC active state */
+const tocLinks = document.querySelectorAll('.toc-nav a');
+const headings = document.querySelectorAll('.post-body h2[id], .post-body h3[id]');
+function updateToc() {
+  let active = '';
+  headings.forEach(h => { if (window.scrollY >= h.offsetTop - 140) active = h.id; });
+  tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + active));
+}
+window.addEventListener('scroll', updateToc, { passive: true });
+updateToc();
+
+/* Nav scroll shadow */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.style.boxShadow = window.scrollY > 10 ? '0 1px 12px rgba(0,0,0,.06)' : 'none';
+}, { passive: true });
+</script>
+</body>
+</html>
