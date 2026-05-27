@@ -95,7 +95,10 @@
 }
 @media (max-width: 860px) {
   .post-layout { grid-template-columns: 1fr; gap: 2rem; }
-  .post-sidebar { order: -1; }
+  .post-sidebar { 
+    order: -1; 
+    position: static; 
+  }
 }
 
 /* ── Article body ───────────────────────────────── */
