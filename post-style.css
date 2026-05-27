@@ -93,10 +93,13 @@
   margin: 0 auto;
   padding: 3rem 1.5rem 6rem;
 }
-@media (max-width: 860px) {
-  .post-layout { grid-template-columns: 1fr; gap: 2rem; }
-  .post-sidebar { 
-    display: none; 
+@media (max-width: 1024px) {
+  .post-layout {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .post-sidebar {
+    display: none !important;
   }
 }
 
@@ -162,9 +165,8 @@
   padding: .15em .35em;
   color: var(--sienna);
   word-break: break-word;
-  display: inline-block;
-  vertical-align: middle;
-  align-self: center;
+  display: inline;
+  white-space: nowrap;
 }
 
 /* Code blocks */
